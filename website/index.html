@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sociyx: clean up your own social media history, locally</title>
+<meta name="description" content="Free, open-source, local-first tool to bulk-clean your own Bluesky, Mastodon and Instagram history. Preview, export, then delete slowly with honest results. 0.0.2 alpha.">
+<link rel="canonical" href="https://sociyx.com/">
+<meta name="theme-color" content="#f0f1f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0c0f" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sociyx">
+<meta property="og:title" content="sociyx: clean up your own social media history, locally">
+<meta property="og:description" content="Free, open-source, local-first tool to bulk-clean your own Bluesky, Mastodon and Instagram history. Preview, export, then delete slowly with honest results. 0.0.2 alpha.">
+<meta property="og:url" content="https://sociyx.com/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap"><a class="brand" href="/" aria-label="sociyx, home"><svg class="wm" viewBox="0 0 130 42" role="img" aria-label="sociyx"><path d="M17 17C13 13 6 14.5 6 19.5C6 24.5 17 22.5 17 27.5C17 32.5 8 33 5 29.5"/><circle cx="34" cy="22" r="8"/><path d="M63 16A8 8 0 1 0 63 28"/><path d="M74 14V30"/><circle class="dot" cx="74" cy="6" r="2.6"/><path d="M84 14L92 29L100 14M92 29L88 37"/><path d="M108 14L124 30"/><path class="strike" d="M124 14L108 30"/></svg></a><nav aria-label="Main"><ul class="nav"><li><a href="/platforms/">Platforms</a></li><li><a href="/safety/">Safety</a></li><li><a href="/install/">Install</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="https://github.com/amanverasia/sociyx" rel="noopener">GitHub</a></li></ul></nav></div></header>
+
+<main id="main">
+<section class="hero"><div class="bigx" aria-hidden="true"></div><div class="wrap">
+<p class="alpha">0.0.2 alpha</p>
+<h1><span>Strike your old posts.</span> <span>Keep your password.</span></h1>
+<div class="hero-copy">
+<p class="lede">sociyx runs on your computer. It scans your own history, shows you the exact items, saves an export, then deletes them slowly and reports what really happened to each one. You log in. You press the button.</p>
+<div>
+<div class="code cmd"><pre><code>pipx install sociyx</code></pre></div>
+<p class="fine">Or <code>uv tool install sociyx</code>. Needs Python 3.11 or newer. Try it on fake data first: <code>sociyx tui --demo</code>.</p>
+<div class="actions"><a class="btn" href="/install/">Install guide</a><a class="btn alt" href="/safety/">Read the limits first</a></div>
+</div></div>
+
+<figure class="demo" id="demo" aria-labelledby="demo-cap">
+<div class="demo-bar"><strong>sociyx review</strong><span>bluesky / you.bsky.social (made up)</span><span>running on your computer</span></div>
+<ul class="filters" aria-label="Filters applied"><li>type: post</li><li>before 2021-01-01</li><li>keyword: giveaway</li></ul>
+<ol class="feed">
+<li class="post sel struck" data-out="v" data-sel="1"><time datetime="2019-03-02">2019-03-02</time><span class="txt">big giveaway thread, retweet to enter</span><span class="res">deleted, verified</span></li>
+<li class="post dim"><time datetime="2019-05-20">2019-05-20</time><span class="txt">coffee, again</span><span class="res">not selected</span></li>
+<li class="post sel struck" data-out="v" data-sel="1"><time datetime="2019-07-18">2019-07-18</time><span class="txt">giveaway winner announced!</span><span class="res">deleted, verified</span></li>
+<li class="post sel struck" data-out="u" data-sel="1"><time datetime="2020-01-09">2020-01-09</time><span class="txt">re-opening the giveaway for a week</span><span class="res">deleted, unverified</span></li>
+<li class="post dim"><time datetime="2020-06-03">2020-06-03</time><span class="txt">hot take: tabs beat spaces</span><span class="res">not selected</span></li>
+<li class="post sel" data-out="f" data-sel="1"><time datetime="2020-09-14">2020-09-14</time><span class="txt">giveaway closes tonight</span><span class="res">failed</span></li>
+<li class="post sel" data-out="s" data-sel="1"><time datetime="2020-11-30">2020-11-30</time><span class="txt">giveaway: last call</span><span class="res">skipped, edited since preview</span></li>
+<li class="post dim"><time datetime="2021-02-02">2021-02-02</time><span class="txt">giveaway round two</span><span class="res">kept, after 2021</span></li>
+</ol>
+<div class="demo-foot"><span class="cmdline">Type <b>delete 5</b> to continue: <span class="typed">delete 5</span></span><span class="clock-wrap">simulated clock <span class="clock">00:03:45</span></span>
+<span class="stage">Done: 2 deleted and verified, 1 unverified, 1 failed, 1 skipped.</span><button class="replay" type="button" hidden>Replay</button></div>
+<figcaption class="demo-note" id="demo-cap"><strong>Illustration with made-up data, not a screenshot.</strong> Sped up about 40 times: real runs wait between items (30 to 45 seconds on Instagram, 60 seconds on Mastodon, about one per second on Bluesky). Only items that were deleted are struck through.</figcaption>
+</figure>
+</div></section>
+
+<section class="s-tight"><div class="wrap">
+<ul class="claims">
+<li><strong>No account, no backend.</strong>There is no sociyx service. Nothing is uploaded, and there is no telemetry.</li>
+<li><strong>You type the password.</strong>Login happens in a visible browser on the platform's own page, with your MFA.</li>
+<li><strong>You type delete N.</strong>Nothing is removed until you confirm the exact count.</li>
+</ul></div></section>
+
+<section id="local-first"><div class="wrap">
+<h2>Everything stays on one side of the line.</h2>
+<p class="lede">Your data, sessions and exports live in a private folder with owner-only permissions. The only network traffic goes to the platforms you choose, plus Bluesky identity lookups.</p>
+<div class="map">
+<div class="zone home"><h3>Your computer</h3><ul>
+<li>sociyx<small>Scans, filters, plans, deletes. Open source, MIT.</small></li>
+<li>A private folder<small>Database, exports, and a <code>secrets</code> folder you should treat like a password.</small></li>
+<li>A visible browser window<small>Where you log in and pass MFA yourself.</small></li></ul></div>
+<div class="wire"><span>only this crosses</span></div>
+<div class="zone out"><h3>Platforms you choose</h3><ul><li>Bluesky</li><li>Mastodon</li><li>Instagram</li><li><small>Plus Bluesky identity lookups, which also go to plc.directory and the public Bluesky AppView.</small></li></ul></div>
+</div>
+<p class="nothing">Not in the picture: a sociyx server, a sociyx account, telemetry, or an AI deciding what to delete. <s>Those</s> do not exist. The filters are plain date, keyword and content-type rules.</p>
+</div></section>
+
+<section id="how"><div class="wrap">
+<h2>Four steps. Deleting is the last one.</h2>
+<p class="lede">Nothing is deleted by logging in, scanning or planning.</p>
+<ol class="steps">
+<li><span class="who">You</span><h3>Log in</h3><p>A visible browser opens on the platform's own login page. You type your password and pass MFA. sociyx waits.</p></li>
+<li><span class="who sx">Read-only</span><h3>Scan and filter</h3><p>Narrow the list by date range, keyword or content type, and exclude what you want to keep.</p></li>
+<li><span class="who">You</span><h3>Preview and export</h3><p>Review the exact items. The plan saves an export first, and deleting needs you to type <code>delete N</code>.</p></li>
+<li><span class="who sx">Paced</span><h3>Delete slowly</h3><p>Paced to stay inside platform limits. Pause, resume after a crash, or cancel. Every item gets its own result.</p></li>
+</ol>
+<h3>Results that are not overstated</h3>
+<ul class="outcomes">
+<li class="v"><b>Deleted, verified</b><span>The delete went through and sociyx checked afterwards that the item is gone.</span></li>
+<li class="u"><b>Deleted, unverified</b><span>The delete was accepted, but the follow-up check could not confirm it.</span></li>
+<li class="f"><b>Failed</b><span>The delete did not succeed. The report says why.</span></li>
+<li class="s"><b>Skipped</b><span>Not touched, for example because the item changed after you previewed it.</span></li>
+</ul>
+</div></section>
+
+<div class="wont" id="limits"><div class="wrap">
+<h2>What it won't do. <s>Wipe everything.</s></h2>
+<div class="wont-cols">
+<div><h3>It never</h3><ul>
+<li><strong>Bypasses</strong> CAPTCHAs, MFA, challenges or rate limits. If one appears, the job stops and waits for you.</li>
+<li><strong>Types your password</strong> for you into a login page.</li>
+<li><strong>Touches</strong> other people's content, or accounts you do not own.</li>
+<li><strong>Claims</strong> your history is completely wiped.</li></ul></div>
+<div><h3>It cannot</h3><ul>
+<li><strong>Reach everything.</strong> Platforms do not expose a complete history, so sociyx only acts on what it can list.</li>
+<li><strong>Delete copies it does not control:</strong> other people's quotes and screenshots, caches, archives, federated copies.</li>
+<li><strong>Undo.</strong> The export is a record of what you removed, not a restore.</li>
+<li><strong>Confirm every delete.</strong> Hence verified and unverified.</li></ul></div>
+</div>
+<div class="risk"><p><strong>Instagram carries real account risk.</strong> There is no official way to do this, so sociyx uses an unofficial API that conflicts with Instagram's terms. It can trigger challenges, blocks or, in the worst case, a disabled account. Slow pacing lowers the chance but does not remove it. <a href="/safety/">Read the safety page</a>.</p></div>
+</div></div>
+
+<section id="platforms"><div class="wrap">
+<h2>Verified status, platform by platform.</h2>
+<p class="lede">An alpha. "Working" means the code is written and passes tests against mock servers. Real-account checks are listed separately, and there are few so far.</p>
+<div class="tablewrap" role="region" aria-label="Platform status" tabindex="0">
+<table class="matrix">
+<thead><tr><th scope="col">Platform</th><th scope="col">Code status</th><th scope="col">Tested on a real account</th><th scope="col">Default pace</th></tr></thead>
+<tbody>
+<tr><td>Bluesky</td><td data-l="Code status"><span class="tag warn">Working, early</span></td><td data-l="Tested on a real account">Read-only scan checked against public data. Real login and deletion not yet.</td><td data-l="Default pace">1 delete per second</td></tr>
+<tr><td>Mastodon</td><td data-l="Code status"><span class="tag warn">Working, early</span></td><td data-l="Tested on a real account">Same as Bluesky. Real login and deletion not yet.</td><td data-l="Default pace">1 delete per 60 seconds</td></tr>
+<tr><td>Instagram</td><td data-l="Code status"><span class="tag warn">Working, unofficial API</span></td><td data-l="Tested on a real account">Scan, list and DM unsend, reported by the account owner. Other deletions not yet.</td><td data-l="Default pace">30 to 45 seconds per write, 200 per day cap</td></tr>
+<tr><td>X, Reddit, Threads, others</td><td data-l="Code status"><span class="tag off">Researched, not built</span></td><td data-l="Tested on a real account">No support today.</td><td data-l="Default pace">None</td></tr>
+</tbody></table></div>
+<p class="legend">Half-filled marker: works in tests, not yet proven on a real account. Empty marker: not built.</p>
+<p class="more"><a href="/platforms/">Full detail per platform and content type</a></p>
+</div></section>
+
+<section id="install"><div class="wrap split">
+<div><h2>Install</h2>
+<p class="lede">Needs Python 3.11 or newer. Install with whichever tool you prefer, then fetch the browser used for logins.</p>
+<p class="more"><a href="/install/">Full install guide</a></p></div>
+<div>
+<div class="code"><pre><code>pipx install sociyx
+# or
+uv tool install sociyx</code></pre></div>
+<p class="measure">Try the whole flow on fake data first. This touches no real account and uses a throw-away folder:</p>
+<div class="code"><pre><code>sociyx tui --demo</code></pre></div>
+</div></div></section>
+
+<section id="faq"><div class="wrap">
+<h2>Questions</h2>
+<div class="faq">
+<details><summary>Is it really free?</summary><p>Yes. It is MIT-licensed open source. There is no account, subscription or hosted service, and nothing to pay for.</p></details><details><summary>Will it delete everything I have ever posted?</summary><p>No, and it will never claim to. Platforms do not expose your complete history, so sociyx can only act on what it can list. Reports say what was and was not covered. A finished cleanup is not proof that nothing remains, and copies it does not control (other people's quotes and screenshots, caches, archives, federated copies) stay where they are.</p></details><details><summary>Can I undo a deletion?</summary><p>No. Before deleting, sociyx writes an export of exactly the items in your plan, so you keep a copy of what you removed, but it does not re-post anything. That is why the final step asks you to type delete and the number of items.</p></details><details><summary>Can my account get restricted?</summary><p>On Instagram, yes, it is a real risk: sociyx uses an unofficial API, which conflicts with Instagram's terms and can trigger challenges or blocks. Slow pacing lowers the chance but does not remove it. Bluesky and Mastodon use their public APIs. See the safety page.</p></details><details><summary>What about CAPTCHAs and two-factor codes?</summary><p>You handle them yourself, in a visible browser window or on the platform's own page. sociyx never solves or bypasses a CAPTCHA, MFA prompt or challenge. If one appears mid-run, the job stops and waits for you.</p></details><details><summary>Can it delete other people's content, or someone else's account?</summary><p>No. It is for your own history only, and you should not run it against accounts you do not own.</p></details><details><summary>Why a terminal app?</summary><p>It is the simplest way to keep everything on your machine with no server involved. There is a guided terminal UI (run sociyx with no arguments) and plain commands for scripts. A local web UI is planned, but it does not exist yet.</p></details><details><summary>Does it use AI?</summary><p>No. Filters are plain date, keyword and content-type rules, and you see the exact items before anything is deleted.</p></details><details><summary>Is it the same as Redact.dev?</summary><p>No. It is inspired by the idea behind Redact.dev but is a separate project. No Redact code, branding or assets are used.</p></details>
+</div></div></section>
+</main>
+<footer class="site-footer"><div class="wrap"><div><svg class="wm" viewBox="0 0 130 42" aria-hidden="true"><path d="M17 17C13 13 6 14.5 6 19.5C6 24.5 17 22.5 17 27.5C17 32.5 8 33 5 29.5"/><circle cx="34" cy="22" r="8"/><path d="M63 16A8 8 0 1 0 63 28"/><path d="M74 14V30"/><circle class="dot" cx="74" cy="6" r="2.6"/><path d="M84 14L92 29L100 14M92 29L88 37"/><path d="M108 14L124 30"/><path class="strike" d="M124 14L108 30"/></svg><p>Free and open source under the MIT license. Current release: 0.0.2, alpha.</p><p>This site has no trackers, no cookies and no analytics, and loads nothing from other sites.</p><p>Inspired by the idea behind Redact.dev, but independent: no code, branding or assets from it.</p></div><ul><li><a href="/platforms/">Platforms</a></li><li><a href="/safety/">Safety</a></li><li><a href="/install/">Install</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="https://github.com/amanverasia/sociyx" rel="noopener">Source on GitHub</a></li><li><a href="https://github.com/amanverasia/sociyx/issues" rel="noopener">Issues</a></li></ul></div></footer>
+<script src="/assets/copy.js" defer></script>
+<script src="/assets/demo.js" defer></script>
+</body>
+</html>

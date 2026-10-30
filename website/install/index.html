@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install sociyx</title>
+<meta name="description" content="Install sociyx with pipx or uv, fetch the Playwright browser, and try the guided terminal UI on fake data with sociyx tui --demo.">
+<link rel="canonical" href="https://sociyx.com/install/">
+<meta name="theme-color" content="#f0f1f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0c0f" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sociyx">
+<meta property="og:title" content="Install sociyx">
+<meta property="og:description" content="Install sociyx with pipx or uv, fetch the Playwright browser, and try the guided terminal UI on fake data with sociyx tui --demo.">
+<meta property="og:url" content="https://sociyx.com/install/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap"><a class="brand" href="/" aria-label="sociyx, home"><svg class="wm" viewBox="0 0 130 42" role="img" aria-label="sociyx"><path d="M17 17C13 13 6 14.5 6 19.5C6 24.5 17 22.5 17 27.5C17 32.5 8 33 5 29.5"/><circle cx="34" cy="22" r="8"/><path d="M63 16A8 8 0 1 0 63 28"/><path d="M74 14V30"/><circle class="dot" cx="74" cy="6" r="2.6"/><path d="M84 14L92 29L100 14M92 29L88 37"/><path d="M108 14L124 30"/><path class="strike" d="M124 14L108 30"/></svg></a><nav aria-label="Main"><ul class="nav"><li><a href="/platforms/">Platforms</a></li><li><a href="/safety/">Safety</a></li><li><a href="/install/" aria-current="page">Install</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="https://github.com/amanverasia/sociyx" rel="noopener">GitHub</a></li></ul></nav></div></header>
+<main id="main">
+
+<div class="page-head"><div class="wrap">
+<h1>Install</h1>
+<p class="lede">sociyx is a Python command-line tool with a guided terminal UI. A local web UI is planned but does not exist yet.</p>
+<p class="notice"><strong>0.0.2 alpha.</strong> Read the <a href="/safety/">safety page</a> before your first real run. The project documents setup on Linux Mint; other systems have not been verified by the developers.</p>
+</div></div>
+
+<section><div class="wrap prose">
+<h2>1. Install the tool</h2>
+<p>You need Python 3.11 or newer. Use either of these:</p>
+<div class="code"><pre><code>pipx install sociyx</code></pre></div>
+<div class="code"><pre><code>uv tool install sociyx</code></pre></div>
+<p>For Instagram, add the optional extra, for example <code>pipx install "sociyx[instagram]"</code> or <code>uv tool install "sociyx[instagram]"</code>.</p>
+<p>Check it works:</p>
+<div class="code"><pre><code>sociyx --help</code></pre></div>
+
+<h2>2. Get the browser used for logins</h2>
+<p>Logins happen in a visible Chromium window that Playwright manages, so you type your password and pass MFA yourself. Download that browser once:</p>
+<div class="code"><pre><code>uvx --from sociyx playwright install chromium</code></pre></div>
+<p>If your installer keeps tools in isolated environments, as pipx and uv do, the <code>playwright</code> command lives inside sociyx's environment, which is why the line above runs it through sociyx. If Chromium later reports missing system libraries on Linux, the same command with <code>install-deps chromium</code> installs them (it uses sudo for apt packages).</p>
+<p>If Playwright's Chromium cannot start at all, sociyx falls back to opening your default browser for OAuth logins.</p>
+
+<h2>3. First run: practice on fake data</h2>
+<p>Demo mode shows fake accounts and data in a throw-away folder. Your real data is not touched and no platform is contacted.</p>
+<div class="code"><pre><code>sociyx tui --demo</code></pre></div>
+<p>Running <code>sociyx</code> with no arguments in a terminal opens the same guided UI for real accounts. The flow is Home, Account, Scan, Browse and select, Review, Run, Results. Press <code>?</code> for key help.</p>
+<p>Prefer plain commands? The same practice flow works with the fake <code>fixture</code> platform:</p>
+<div class="code"><pre><code>sociyx login fixture --account alice
+sociyx scan fixture
+sociyx list fixture --type post --limit 10
+sociyx plan create fixture --type post
+sociyx plan list</code></pre></div>
+<p>That prints a plan ID. <code>sociyx plan show PLAN_ID --all</code> lists every item, and <code>sociyx plan execute PLAN_ID</code> is a dry run that deletes nothing and prints the live command.</p>
+
+<h2>4. Your first real account</h2>
+<p>Log in, scan, and look before you plan. For Bluesky:</p>
+<div class="code"><pre><code>sociyx login bluesky --account you.bsky.social
+sociyx scan bluesky
+sociyx list bluesky --type post --limit 20</code></pre></div>
+<p>The same pattern works for <code>mastodon</code> (<code>--account @you@your.instance</code>) and <code>instagram</code>. Create a plan with filters that match one to three items, review it with <code>plan show PLAN_ID --all</code>, and run the dry run. Copy the printed live command only when you are sure. Then <code>sociyx report PLAN_ID</code> shows the per-item results.</p>
+<p>Filters available when listing and planning include <code>--type</code>, <code>--since</code>, <code>--until</code>, <code>--keyword</code> and <code>--exclude-keyword</code>.</p>
+
+<h2>Where your data lives</h2>
+<p>In <code>~/.local/share/sociyx</code>, or <code>$XDG_DATA_HOME/sociyx</code>. Set <code>SOCIYX_HOME</code> to use another folder. See the <a href="/safety/">safety page</a> for how to remove it.</p>
+
+<h2>Upgrade or uninstall</h2>
+<div class="code"><pre><code>pipx upgrade sociyx      # or: uv tool upgrade sociyx
+pipx uninstall sociyx    # or: uv tool uninstall sociyx</code></pre></div>
+<p>Uninstalling the tool leaves your data folder in place. Delete it yourself if you want it gone.</p>
+</div></section>
+
+</main>
+<footer class="site-footer"><div class="wrap"><div><svg class="wm" viewBox="0 0 130 42" aria-hidden="true"><path d="M17 17C13 13 6 14.5 6 19.5C6 24.5 17 22.5 17 27.5C17 32.5 8 33 5 29.5"/><circle cx="34" cy="22" r="8"/><path d="M63 16A8 8 0 1 0 63 28"/><path d="M74 14V30"/><circle class="dot" cx="74" cy="6" r="2.6"/><path d="M84 14L92 29L100 14M92 29L88 37"/><path d="M108 14L124 30"/><path class="strike" d="M124 14L108 30"/></svg><p>Free and open source under the MIT license. Current release: 0.0.2, alpha.</p><p>This site has no trackers, no cookies and no analytics, and loads nothing from other sites.</p><p>Inspired by the idea behind Redact.dev, but independent: no code, branding or assets from it.</p></div><ul><li><a href="/platforms/">Platforms</a></li><li><a href="/safety/">Safety</a></li><li><a href="/install/">Install</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="https://github.com/amanverasia/sociyx" rel="noopener">Source on GitHub</a></li><li><a href="https://github.com/amanverasia/sociyx/issues" rel="noopener">Issues</a></li></ul></div></footer>
+<script src="/assets/copy.js" defer></script>
+</body>
+</html>

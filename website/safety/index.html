@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Safety, limits and risks - sociyx</title>
+<meta name="description" content="How sociyx guards deletions, what it never does, and the honest limits: incomplete platform history, copies it cannot reach, and the account risk of unofficial APIs.">
+<link rel="canonical" href="https://sociyx.com/safety/">
+<meta name="theme-color" content="#f0f1f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0c0f" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sociyx">
+<meta property="og:title" content="Safety, limits and risks - sociyx">
+<meta property="og:description" content="How sociyx guards deletions, what it never does, and the honest limits: incomplete platform history, copies it cannot reach, and the account risk of unofficial APIs.">
+<meta property="og:url" content="https://sociyx.com/safety/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap"><a class="brand" href="/" aria-label="sociyx, home"><svg class="wm" viewBox="0 0 130 42" role="img" aria-label="sociyx"><path d="M17 17C13 13 6 14.5 6 19.5C6 24.5 17 22.5 17 27.5C17 32.5 8 33 5 29.5"/><circle cx="34" cy="22" r="8"/><path d="M63 16A8 8 0 1 0 63 28"/><path d="M74 14V30"/><circle class="dot" cx="74" cy="6" r="2.6"/><path d="M84 14L92 29L100 14M92 29L88 37"/><path d="M108 14L124 30"/><path class="strike" d="M124 14L108 30"/></svg></a><nav aria-label="Main"><ul class="nav"><li><a href="/platforms/">Platforms</a></li><li><a href="/safety/" aria-current="page">Safety</a></li><li><a href="/install/">Install</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="https://github.com/amanverasia/sociyx" rel="noopener">GitHub</a></li></ul></nav></div></header>
+<main id="main">
+
+<div class="page-head"><div class="wrap">
+<h1>Safety, limits and risks</h1>
+<p class="lede">sociyx can permanently delete content from your accounts. This page explains what stands between you and a mistake, and what it cannot promise.</p>
+</div></div>
+
+<section><div class="wrap two">
+<div class="prose">
+<h2>How a deletion is guarded</h2>
+<ol>
+<li>Scanning is read-only. Deleting is a separate step.</li>
+<li>Creating a plan freezes your selection, writes an export of exactly those items, and deletes nothing.</li>
+<li>Running a plan is a dry run by default. Real deletion needs an explicit live flag and a confirmation token specific to that plan.</li>
+<li>Before deleting, sociyx checks the token, that the export file is unmodified, that the plan still matches, and that the logged-in account is the plan's account.</li>
+<li>Each item is re-checked against what you previewed. Items edited since then are skipped, not deleted.</li>
+<li>Problems with login, challenges or repeated rate limits stop the job. Nothing is bypassed.</li>
+</ol>
+</div>
+<div class="prose">
+<h2>The delete N confirmation</h2>
+<p>In the guided UI nothing is deleted until you type <code>delete</code> followed by the number of items, for example <code>delete 12</code>, on the Review screen. If the number does not match what you are about to remove, you have a reason to stop.</p>
+<p>On the command line the equivalent is the live command printed by the dry run, which carries a token tied to the plan, the account, the item count and a digest of the items.</p>
+<p><strong>Make your first real run tiny.</strong> Choose filters that match one to three items you have looked at, check the account and the count, and only then scale up.</p>
+</div>
+</div></section>
+
+<section><div class="wrap two">
+<div class="prose never">
+<h2>What sociyx never does</h2>
+<ul>
+<li>Solve or bypass CAPTCHAs, MFA, suspicious-login challenges or rate limits.</li>
+<li>Type your password for you into a login page. You log in yourself.</li>
+<li>Delete other people's content, or work on accounts you do not own.</li>
+<li>Send data anywhere except the platforms you choose to use (plus Bluesky identity lookups).</li>
+<li>Collect telemetry, require an account, or use AI to decide what to delete.</li>
+<li>Claim that your history has been completely wiped.</li>
+</ul>
+</div>
+<div class="prose">
+<h2>What sociyx cannot do</h2>
+<ul>
+<li><strong>Reach everything.</strong> Platforms do not expose a complete history. Some old items may never be listed, and reports cover only the items in your plan.</li>
+<li><strong>Delete copies it does not control.</strong> Other people's quotes and screenshots, caches, search engines, archives, and federated copies on other servers.</li>
+<li><strong>Undo.</strong> The export is a record of what you removed, not a restore.</li>
+<li><strong>Confirm every delete.</strong> Some platforms do not let it check afterwards, which is why results are split into verified and unverified.</li>
+</ul>
+</div>
+</div></section>
+
+<section><div class="wrap prose">
+<h2>Risks to your account</h2>
+<p><strong>Instagram.</strong> Because the access is unofficial, automating it can get an account challenged, temporarily blocked, or in the worst case disabled. sociyx paces writes at 30 to 45 seconds with longer breaks and a 200 per day cap, and stops for 24 hours if Instagram signals a block. That lowers the risk. It does not remove it, and the decision to accept it is yours.</p>
+<p><strong>Bluesky and Mastodon.</strong> These use the platforms' public APIs and respect the rate limits they publish. They are still early and have not been run end to end on a real account. Treat the first live run as a test.</p>
+<p><strong>Alpha software.</strong> Version 0.0.1 can have bugs. The automated tests use mock servers, not real ones, so they show the code behaves as designed, not that every platform behaves the same way. See <a href="https://github.com/amanverasia/sociyx/blob/main/docs/VERIFICATION.md" rel="noopener">what was tested and how</a>.</p>
+</div></section>
+
+<section><div class="wrap prose">
+<h2>Handling your credentials</h2>
+<p>Everything lives in one private folder, usually <code>~/.local/share/sociyx</code>, created with owner-only permissions. The <code>secrets</code> folder inside it holds session tokens and browser profiles, which are equivalent to being logged in, so treat them like passwords. Back this folder up only to places you trust, and never commit it to a repository.</p>
+<p>Never paste passwords, app passwords, tokens, session files or browser profile contents into a chat, an issue or a pull request. Type secrets only at sociyx's local hidden prompt or on the platform's own login page. Error output has token-shaped strings scrubbed, but that is best effort, so read output before sharing it.</p>
+<p>To remove everything: run <code>sociyx logout</code> for each account, then delete the folder. Full steps are in the <a href="https://github.com/amanverasia/sociyx/blob/main/SECURITY.md" rel="noopener">security policy</a>, which also explains how to report a vulnerability.</p>
+</div></section>
+
+</main>
+<footer class="site-footer"><div class="wrap"><div><svg class="wm" viewBox="0 0 130 42" aria-hidden="true"><path d="M17 17C13 13 6 14.5 6 19.5C6 24.5 17 22.5 17 27.5C17 32.5 8 33 5 29.5"/><circle cx="34" cy="22" r="8"/><path d="M63 16A8 8 0 1 0 63 28"/><path d="M74 14V30"/><circle class="dot" cx="74" cy="6" r="2.6"/><path d="M84 14L92 29L100 14M92 29L88 37"/><path d="M108 14L124 30"/><path class="strike" d="M124 14L108 30"/></svg><p>Free and open source under the MIT license. Current release: 0.0.2, alpha.</p><p>This site has no trackers, no cookies and no analytics, and loads nothing from other sites.</p><p>Inspired by the idea behind Redact.dev, but independent: no code, branding or assets from it.</p></div><ul><li><a href="/platforms/">Platforms</a></li><li><a href="/safety/">Safety</a></li><li><a href="/install/">Install</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="https://github.com/amanverasia/sociyx" rel="noopener">Source on GitHub</a></li><li><a href="https://github.com/amanverasia/sociyx/issues" rel="noopener">Issues</a></li></ul></div></footer>
+<script src="/assets/copy.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 42" role="img" aria-label="sociyx">
+  <style>
+    .wm{fill:none;stroke:#0e1014;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+    .wm .dot{fill:#0e1014;stroke:none}.wm .strike{stroke:#cf1148}
+    @media (prefers-color-scheme:dark){.wm{stroke:#f1f2f5}.wm .dot{fill:#f1f2f5}.wm .strike{stroke:#ff5c8a}}
+  </style>
+  <g class="wm">
+    <path d="M17 17C13 13 6 14.500 6 19.500C6 24.500 17 22.500 17 27.500C17 32.500 8 33 5 29.500"/>
+    <circle cx="34" cy="22" r="8"/>
+    <path d="M63 16A8 8 0 1 0 63 28"/>
+    <path d="M74 14V30"/><circle class="dot" cx="74" cy="6" r="2.600"/>
+    <path d="M84 14L92 29L100 14M92 29L88 37"/>
+    <path d="M108 14L124 30"/><path class="strike" d="M124 14L108 30"/>
+  </g>
+</svg>

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Platforms and verification status - sociyx</title>
+<meta name="description" content="What sociyx supports on Bluesky, Mastodon and Instagram, by content type, with an honest account of what has and has not been tested on a real account.">
+<link rel="canonical" href="https://sociyx.com/platforms/">
+<meta name="theme-color" content="#f0f1f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0c0f" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sociyx">
+<meta property="og:title" content="Platforms and verification status - sociyx">
+<meta property="og:description" content="What sociyx supports on Bluesky, Mastodon and Instagram, by content type, with an honest account of what has and has not been tested on a real account.">
+<meta property="og:url" content="https://sociyx.com/platforms/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap"><a class="brand" href="/" aria-label="sociyx, home"><svg class="wm" viewBox="0 0 130 42" role="img" aria-label="sociyx"><path d="M17 17C13 13 6 14.5 6 19.5C6 24.5 17 22.5 17 27.5C17 32.5 8 33 5 29.5"/><circle cx="34" cy="22" r="8"/><path d="M63 16A8 8 0 1 0 63 28"/><path d="M74 14V30"/><circle class="dot" cx="74" cy="6" r="2.6"/><path d="M84 14L92 29L100 14M92 29L88 37"/><path d="M108 14L124 30"/><path class="strike" d="M124 14L108 30"/></svg></a><nav aria-label="Main"><ul class="nav"><li><a href="/platforms/" aria-current="page">Platforms</a></li><li><a href="/safety/">Safety</a></li><li><a href="/install/">Install</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="https://github.com/amanverasia/sociyx" rel="noopener">GitHub</a></li></ul></nav></div></header>
+<main id="main">
+
+<div class="page-head"><div class="wrap">
+<h1>Platforms</h1>
+<p class="lede">What sociyx can list and delete on each platform, and what has actually been checked.</p>
+<p class="notice"><strong>Alpha.</strong> The only real-account results so far are for Instagram: scan, list and DM unsend, reported by the account owner. Everything else is tested against mock servers and, for Bluesky and Mastodon, live read-only requests to public data. Your first real run should be a plan of one to three items you have reviewed.</p>
+</div></div>
+
+<section><div class="wrap">
+<h2>At a glance</h2>
+<div class="tablewrap" role="region" aria-label="Status by platform" tabindex="0"><table><thead><tr><th scope="col">Platform</th><th scope="col">Implemented</th><th scope="col">Real login and deletion</th><th scope="col">Pace</th></tr></thead><tbody><tr><td>Bluesky</td><td><span class="tag warn">Yes, early</span></td><td>Not yet live-verified</td><td>1 delete per second by default</td></tr><tr><td>Mastodon</td><td><span class="tag warn">Yes, early</span></td><td>Not yet live-verified</td><td>One delete per 60 seconds by default</td></tr><tr><td>Instagram</td><td><span class="tag warn">Yes, unofficial API</span></td><td>Scan, list and DM unsend verified. Other deletions not yet.</td><td>30 to 45 seconds per write, 200 per day cap</td></tr></tbody></table></div>
+<p class="muted measure">Pacing is deliberately conservative. Platforms can change their limits, and sociyx stops or waits when told to.</p>
+</div></section>
+
+<section id="bluesky"><div class="wrap prose">
+<h2>Bluesky</h2>
+<p>Records are listed and deleted directly in your own repository on your data server. Login is OAuth in a visible browser window on Bluesky's own page (you handle your password and 2FA, and sociyx never sees the password), or an app password typed at a hidden local prompt.</p>
+<div class="tablewrap" role="region" aria-label="Bluesky content types" tabindex="0"><table><thead><tr><th scope="col">Type</th><th scope="col">What it is</th></tr></thead><tbody><tr><td>post</td><td>Posts, replies and quote posts</td></tr><tr><td>like</td><td>Your likes</td></tr><tr><td>repost</td><td>Your reposts</td></tr><tr><td>follow</td><td>Accounts you follow</td></tr><tr><td>block</td><td>Accounts you block</td></tr><tr><td>list, listitem</td><td>Your lists and their entries</td></tr></tbody></table></div>
+<h3>Verified so far</h3>
+<ul>
+<li>Read-only scanning of a public account, paging through records. Checked live against public data.</li>
+<li>Looking up a missing record reports it as gone. Checked live.</li>
+<li>The start of the OAuth flow is accepted by Bluesky's servers. Checked live, with no login.</li>
+</ul>
+<h3>Not yet verified</h3>
+<ul>
+<li>A real login (OAuth or app password), and any real delete.</li>
+<li>How long deletions take to show up in feeds and search.</li>
+<li>Any limit on how far back your history can be listed.</li>
+</ul>
+<h3>Not covered</h3>
+<p>Direct messages, your profile record, media files after deletion, and copies on relays, third-party archives and other people's quotes, replies and screenshots.</p>
+<p>After each delete, sociyx reads the record back from your data server. That is the source of truth, but feeds and search can lag behind it. Details: <a href="https://github.com/amanverasia/sociyx/blob/main/docs/platforms/bluesky.md" rel="noopener">Bluesky notes</a>.</p>
+</div></section>
+
+<section id="mastodon"><div class="wrap prose">
+<h2>Mastodon</h2>
+<p>Works against the API of your home instance. Login is OAuth with PKCE in a visible browser on your instance's own page, with a manual code fallback if your instance rejects the local redirect.</p>
+<div class="tablewrap" role="region" aria-label="Mastodon content types" tabindex="0"><table><thead><tr><th scope="col">Type</th><th scope="col">What it is</th><th scope="col">Action</th></tr></thead><tbody><tr><td>post</td><td>Your statuses, including replies (not boosts)</td><td>Delete</td></tr><tr><td>boost</td><td>Your boosts</td><td>Unboost</td></tr><tr><td>favourite</td><td>Posts you favourited</td><td>Unfavourite</td></tr><tr><td>bookmark</td><td>Posts you bookmarked</td><td>Remove bookmark</td></tr></tbody></table></div>
+<p>Dates for favourites and bookmarks are the date of the original post, not of when you favourited or bookmarked it, so date filters apply to that.</p>
+<h3>Pace</h3>
+<p>Mastodon limits deleting and unboosting to 30 per 30 minutes per account, so sociyx waits 60 seconds between deletes. Ten thousand posts take roughly a week. Instances can change their limits.</p>
+<h3>Verified so far</h3>
+<p>Reading public posts page by page on mastodon.social, and a missing post being reported as gone. Both live, read-only.</p>
+<h3>Not yet verified</h3>
+<p>Any real login and any real delete, unboost, unfavourite or unbookmark.</p>
+<h3>Not covered</h3>
+<p>Direct messages, media attachments, poll votes, follows, lists, filters, profile fields, and copies on other servers. Other servers receive a delete request but are not guaranteed to honour it. Details: <a href="https://github.com/amanverasia/sociyx/blob/main/docs/platforms/mastodon.md" rel="noopener">Mastodon notes</a>.</p>
+</div></section>
+
+<section id="instagram"><div class="wrap prose">
+<h2>Instagram</h2>
+<p class="notice"><strong>Unofficial API, real risk.</strong> There is no official way to do this, so sociyx uses Instagram's private mobile API through a community library. That conflicts with Instagram's terms and can lead to challenges, temporary blocks, or in the worst case a disabled account. Slow pacing lowers the chance but does not remove it. Acting on your own data does not by itself make automation permitted.</p>
+<p>Login opens a visible browser where you log in. sociyx never types into the page and never touches CAPTCHAs. A password method and an existing session file are also available.</p>
+<div class="tablewrap" role="region" aria-label="Instagram content types" tabindex="0"><table><thead><tr><th scope="col">Type</th><th scope="col">What it is</th><th scope="col">Action</th><th scope="col">Live-verified</th></tr></thead><tbody><tr><td>post, reel, story</td><td>Your posts, reels and stories (live and archived)</td><td>Delete</td><td>Not yet</td></tr><tr><td>like</td><td>Posts you liked</td><td>Unlike</td><td>Not yet</td></tr><tr><td>saved</td><td>Posts you saved</td><td>Unsave (from all collections)</td><td>Not yet</td></tr><tr><td>dm</td><td>Direct messages you sent</td><td>Unsend for everyone</td><td>Yes, reported by the account owner</td></tr><tr><td>comment</td><td>Your comments on your own posts</td><td>Delete</td><td>Not yet</td></tr><tr><td>comment_export</td><td>Your comments on other people's posts, from your data export</td><td>Find and delete, best effort</td><td>Not yet</td></tr><tr><td>(scan and list)</td><td>Reading your items</td><td>None</td><td>Yes, reported by the account owner</td></tr></tbody></table></div>
+<p>No API lists your comments on other people's posts. You request your Instagram data export, import it, and sociyx tries to locate each comment. Some may need manual deletion.</p>
+<h3>Pace</h3>
+<p>30 to 45 seconds between writes, a one to three minute pause every 25, and a cap of 200 per day. A 1,000-item cleanup takes ten hours or more. If Instagram signals an action block, the job stops with a 24 hour cool-down.</p>
+<h3>Not covered</h3>
+<p>Message requests, story replies, likes on comments, tags, replies to comments, follows, and any backups Instagram keeps. DM unsend removes the message, but the other person may already have seen it, been notified, or exported it. Details: <a href="https://github.com/amanverasia/sociyx/blob/main/docs/platforms/instagram.md" rel="noopener">Instagram notes</a>.</p>
+</div></section>
+
+<section id="later"><div class="wrap prose">
+<h2>Researched, not built</h2>
+<p>These have been looked into. None is implemented, and there is no promised order or date.</p>
+<div class="tablewrap" role="region" aria-label="Platforms under research" tabindex="0"><table><thead><tr><th scope="col">Platform</th><th scope="col">Where things stand</th></tr></thead><tbody><tr><td>Threads</td><td>Official API supports deleting, with a daily limit. Considered a good next candidate.</td></tr><tr><td>Telegram</td><td>Official user API with verifiable deletes. Needs your own API credentials.</td></tr><tr><td>Tumblr</td><td>Official API supports deleting posts.</td></tr><tr><td>X</td><td>Official API is paid per use. Undecided.</td></tr><tr><td>Reddit</td><td>Access and deletion route undecided. Your data export may help with discovery.</td></tr><tr><td>LinkedIn, TikTok, Discord</td><td>No viable or permitted route. Not planned.</td></tr></tbody></table></div>
+<p>Research notes, including what is verified and what is secondhand: <a href="https://github.com/amanverasia/sociyx/blob/main/docs/PLATFORM_STATUS.md" rel="noopener">platform status</a>.</p>
+</div></section>
+
+</main>
+<footer class="site-footer"><div class="wrap"><div><svg class="wm" viewBox="0 0 130 42" aria-hidden="true"><path d="M17 17C13 13 6 14.5 6 19.5C6 24.5 17 22.5 17 27.5C17 32.5 8 33 5 29.5"/><circle cx="34" cy="22" r="8"/><path d="M63 16A8 8 0 1 0 63 28"/><path d="M74 14V30"/><circle class="dot" cx="74" cy="6" r="2.6"/><path d="M84 14L92 29L100 14M92 29L88 37"/><path d="M108 14L124 30"/><path class="strike" d="M124 14L108 30"/></svg><p>Free and open source under the MIT license. Current release: 0.0.2, alpha.</p><p>This site has no trackers, no cookies and no analytics, and loads nothing from other sites.</p><p>Inspired by the idea behind Redact.dev, but independent: no code, branding or assets from it.</p></div><ul><li><a href="/platforms/">Platforms</a></li><li><a href="/safety/">Safety</a></li><li><a href="/install/">Install</a></li><li><a href="/privacy/">Privacy</a></li><li><a href="https://github.com/amanverasia/sociyx" rel="noopener">Source on GitHub</a></li><li><a href="https://github.com/amanverasia/sociyx/issues" rel="noopener">Issues</a></li></ul></div></footer>
+<script src="/assets/copy.js" defer></script>
+</body>
+</html>
