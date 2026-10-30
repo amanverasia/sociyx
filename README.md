@@ -139,7 +139,7 @@ uv run sociyx list instagram --type comment_export
 
 Importing only adds records to the local database. Use the same plan/review/delete steps
 with `--type comment_export` afterward. Resolving these comments is best-effort; some may
-need manual deletion. See [Instagram details](docs/platforms/instagram.md).
+need manual deletion. See [Instagram details](https://github.com/amanverasia/sociyx/blob/main/docs/platforms/instagram.md).
 
 For Bluesky or Mastodon, use the login examples below, then the same scan, list, plan,
 review, execute, and report flow with that platform name.
@@ -196,7 +196,7 @@ Known limits:
 
 - It runs on your machine. Your data, sessions and exports stay in a private local directory.
 - It is inspired by the idea behind Redact.dev but is independent: no Redact code, branding or assets
-  are used. See [docs/REFERENCES.md](docs/REFERENCES.md).
+  are used. See [docs/REFERENCES.md](https://github.com/amanverasia/sociyx/blob/main/docs/REFERENCES.md).
 - It has no subscription, no hosted backend, no telemetry and no AI. The only network traffic is to
   the platforms you choose to use (plus Bluesky identity lookups at plc.directory / the public
   AppView).
@@ -205,7 +205,7 @@ Known limits:
 - It cannot delete copies it does not control: other people's quotes and screenshots, caches, search
   engines, archives, federated copies. Reports say so.
 - Status: early (v0.1). The only real-account results so far are for Instagram (scan, list and DM
-  unsend, reported by the account owner); everything else is untested against real accounts. See [docs/VERIFICATION.md](docs/VERIFICATION.md). Your first real run should be a
+  unsend, reported by the account owner); everything else is untested against real accounts. See [docs/VERIFICATION.md](https://github.com/amanverasia/sociyx/blob/main/docs/VERIFICATION.md). Your first real run should be a
   plan of 1-3 items that you have reviewed.
 
 ## Safety model in brief
@@ -223,17 +223,17 @@ Known limits:
 8. Jobs can be paused, resumed after a crash, or cancelled, and an interrupted request is verified
    before anything is retried.
 
-Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+Details: [docs/ARCHITECTURE.md](https://github.com/amanverasia/sociyx/blob/main/docs/ARCHITECTURE.md).
 
 ## Supported platforms
 
 | Platform | Status | Notes |
 |---|---|---|
-| Bluesky | Working | Read-only scan verified live against public data. Real login and deletion **not yet live-verified**. [Details](docs/platforms/bluesky.md) |
-| Mastodon | Working | Same caveats as Bluesky. [Details](docs/platforms/mastodon.md) |
-| Instagram | Working (unofficial API) | Scan, list and DM unsend verified on a real account; other deletions **not yet live-verified**. Needs `uv sync --extra instagram`. Very slow pacing (30–45 s/write, 200/day). [Details](docs/platforms/instagram.md) |
+| Bluesky | Working | Read-only scan verified live against public data. Real login and deletion **not yet live-verified**. [Details](https://github.com/amanverasia/sociyx/blob/main/docs/platforms/bluesky.md) |
+| Mastodon | Working | Same caveats as Bluesky. [Details](https://github.com/amanverasia/sociyx/blob/main/docs/platforms/mastodon.md) |
+| Instagram | Working (unofficial API) | Scan, list and DM unsend verified on a real account; other deletions **not yet live-verified**. Needs `uv sync --extra instagram`. Very slow pacing (30–45 s/write, 200/day). [Details](https://github.com/amanverasia/sociyx/blob/main/docs/platforms/instagram.md) |
 | Fixture | Dev/test only | Fake local data; for demos and tests. |
-| X, Reddit, Threads, others | Researched, not implemented | [docs/PLATFORM_STATUS.md](docs/PLATFORM_STATUS.md) |
+| X, Reddit, Threads, others | Researched, not implemented | [docs/PLATFORM_STATUS.md](https://github.com/amanverasia/sociyx/blob/main/docs/PLATFORM_STATUS.md) |
 
 `sociyx platforms` prints content types, deletable types and history-coverage notes for each
 adapter.
@@ -278,7 +278,7 @@ Upgrading from the earlier name (`unpost`)? sociyx keeps using an existing `~/.l
 folder (and honors `UNPOST_HOME` if `SOCIYX_HOME` is unset) until you switch. Nothing is moved or
 copied automatically because the folder contains credentials. To switch, rename it yourself:
 `mv ~/.local/share/unpost ~/.local/share/sociyx`.
-Directories are created `0700`, session and export files `0600`. See [SECURITY.md](SECURITY.md).
+Directories are created `0700`, session and export files `0600`. See [SECURITY.md](https://github.com/amanverasia/sociyx/blob/main/SECURITY.md).
 
 ## Quick start
 
@@ -347,7 +347,7 @@ Pace: 30–45 s between writes, 1–3 min pause every 25, 200/day cap
 (`--daily-cap 100` recommended for DM jobs). Covers posts, reels, stories, likes
 (unlike), saved (unsave from all collections), your sent DMs (unsend), comments on your
 own posts, and export-only comments on others' posts (fuzzy-resolved, else manual steps).
-See [docs/platforms/instagram.md](docs/platforms/instagram.md).
+See [docs/platforms/instagram.md](https://github.com/amanverasia/sociyx/blob/main/docs/platforms/instagram.md).
 
 ## CLI examples
 
@@ -451,10 +451,10 @@ uv run pytest                         # unit and mock tests; live tests are skip
 SOCIYX_LIVE_TESTS=1 uv run pytest -m live   # read-only requests to public Bluesky/Mastodon endpoints
 ```
 
-Live tests perform no login and no writes. Adding a platform: [docs/ADDING_A_PLATFORM.md](docs/ADDING_A_PLATFORM.md).
-More docs: [ARCHITECTURE](docs/ARCHITECTURE.md), [VERIFICATION](docs/VERIFICATION.md),
-[PLATFORM_STATUS](docs/PLATFORM_STATUS.md), [REFERENCES](docs/REFERENCES.md).
+Live tests perform no login and no writes. Adding a platform: [docs/ADDING_A_PLATFORM.md](https://github.com/amanverasia/sociyx/blob/main/docs/ADDING_A_PLATFORM.md).
+More docs: [ARCHITECTURE](https://github.com/amanverasia/sociyx/blob/main/docs/ARCHITECTURE.md), [VERIFICATION](https://github.com/amanverasia/sociyx/blob/main/docs/VERIFICATION.md),
+[PLATFORM_STATUS](https://github.com/amanverasia/sociyx/blob/main/docs/PLATFORM_STATUS.md), [REFERENCES](https://github.com/amanverasia/sociyx/blob/main/docs/REFERENCES.md).
 
 ## License
 
-MIT, see [LICENSE](LICENSE).
+MIT, see [LICENSE](https://github.com/amanverasia/sociyx/blob/main/LICENSE).
