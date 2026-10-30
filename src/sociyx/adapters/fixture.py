@@ -2,7 +2,7 @@
 
 Nothing here talks to a network or a real platform. State lives in a plain JSON
 file (not a secret) so CLI demos survive restarts. Failure modes are injected
-through ``faults`` (constructor argument or the UNPOST_FIXTURE_FAULTS env var)
+through ``faults`` (constructor argument or the SOCIYX_FIXTURE_FAULTS env var)
 so the executor's safety behaviour can be tested deterministically.
 
 Supported faults (all optional):
@@ -88,7 +88,7 @@ class FixtureAdapter(Adapter):
     ):
         self.state_path = Path(state_path) if state_path else paths.home() / "fixture" / "state.json"
         if faults is None:
-            faults = json.loads(os.environ.get("UNPOST_FIXTURE_FAULTS") or "{}")
+            faults = json.loads(os.environ.get("SOCIYX_FIXTURE_FAULTS") or "{}")
         self.faults: dict[str, Any] = faults
         self.page_size = page_size
         self.seed_accounts = tuple(seed_accounts)
@@ -121,7 +121,7 @@ class FixtureAdapter(Adapter):
     @staticmethod
     def _seed_items(name: str) -> dict[str, dict[str, Any]]:
         """Deterministic content: 20 posts, 10 likes, 10 reposts, with awkward timestamps."""
-        rng = random.Random(f"unpost-fixture:{name}")
+        rng = random.Random(f"sociyx-fixture:{name}")
         start = datetime(2019, 1, 1, tzinfo=timezone.utc)
         span = int((datetime(2024, 12, 31, 23, 59, 59, tzinfo=timezone.utc) - start).total_seconds())
         special: dict[tuple[str, int], datetime | None] = {
@@ -333,7 +333,7 @@ class DemoFixtureAdapter(FixtureAdapter):
     @staticmethod
     def _seed_items(name: str) -> dict[str, dict[str, Any]]:
         items = FixtureAdapter._seed_items(name)
-        rng = random.Random(f"unpost-fixture-dm:{name}")
+        rng = random.Random(f"sociyx-fixture-dm:{name}")
         start = datetime(2023, 1, 1, tzinfo=timezone.utc)
         for t, (title, n) in enumerate((("Book club", 6), ("Sam", 4), ("", 3))):
             tid = f"thread{t}"

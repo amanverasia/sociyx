@@ -60,7 +60,7 @@ See [platforms/instagram.md](platforms/instagram.md).
   live-verified.
 - Contents: posts, reels, stories (live + archive), likes, saved, your sent DMs (unsent),
   comments on your own posts, plus export-only comments on others' posts
-  (`unpost import instagram <export_dir>`).
+  (`sociyx import instagram <export_dir>`).
 - Pacing: 30–45 s between writes, 1–3 min pause every 25, 200/day cap. Action blocks stop the job
   with a 24 h cool-down.
 - ToS risk: moderate-high; the user accepted it for their own data. Selectors are not involved

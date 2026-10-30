@@ -5,11 +5,11 @@ from datetime import datetime, timezone
 
 import pytest
 
-from unpost.adapters.fixture import DemoFixtureAdapter, FixtureAdapter
-from unpost.filters import Filter, select
-from unpost.models import ContentItem
-from unpost.planning import create_plan, create_plan_from_items, describe_pacing, preview
-from unpost.scanning import scan_account
+from sociyx.adapters.fixture import DemoFixtureAdapter, FixtureAdapter
+from sociyx.filters import Filter, select
+from sociyx.models import ContentItem
+from sociyx.planning import create_plan, create_plan_from_items, describe_pacing, preview
+from sociyx.scanning import scan_account
 from conftest import make_executor, prepare
 
 NOSLEEP = lambda s: None  # noqa: E731
@@ -83,7 +83,7 @@ def test_manual_plan_runs_only_selected(prep, store, sleeper):
 
 
 def test_describe_pacing_plain_words():
-    from unpost.adapters.instagram import InstagramAdapter
+    from sociyx.adapters.instagram import InstagramAdapter
 
     text = describe_pacing(InstagramAdapter, 50)
     assert "30-45 s" in text and "200 per day" in text and "pause and resume" in text

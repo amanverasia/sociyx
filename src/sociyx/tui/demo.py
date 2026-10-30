@@ -1,4 +1,4 @@
-"""Demo mode: a throw-away UNPOST_HOME pre-seeded with fake accounts, so the whole flow is safe to try."""
+"""Demo mode: a throw-away SOCIYX_HOME pre-seeded with fake accounts, so the whole flow is safe to try."""
 
 from __future__ import annotations
 
@@ -13,11 +13,11 @@ from ..store import Store
 
 
 def prepare_demo_home() -> Path:
-    """Create a scratch data directory, point UNPOST_HOME at it and seed it. Never touches real data."""
-    home = Path(tempfile.mkdtemp(prefix="unpost-demo-"))
-    os.environ["UNPOST_HOME"] = str(home)
-    os.environ["UNPOST_TUI_DEMO"] = "1"
-    os.environ.pop("UNPOST_FIXTURE_FAULTS", None)
+    """Create a scratch data directory, point SOCIYX_HOME at it and seed it. Never touches real data."""
+    home = Path(tempfile.mkdtemp(prefix="sociyx-demo-"))
+    os.environ["SOCIYX_HOME"] = str(home)
+    os.environ["SOCIYX_TUI_DEMO"] = "1"
+    os.environ.pop("SOCIYX_FIXTURE_FAULTS", None)
     seed_demo(Store(paths.db_path()))
     return home
 

@@ -1,4 +1,6 @@
-# unpost
+# sociyx
+
+Website: <https://sociyx.com/>
 
 A local-first, open-source (MIT) command-line tool for bulk cleanup of your **own** social media
 history: scan what you have posted, filter it, review an exact preview, then delete it with
@@ -6,13 +8,13 @@ verification and a report.
 
 ## Start here: how do I use it?
 
-**This is a terminal app.** Run `uv run unpost` with no arguments in a terminal for the
+**This is a terminal app.** Run `uv run sociyx` with no arguments in a terminal for the
 [guided UI](#guided-tui) that walks you through login, scan, selecting items, review and deletion.
 Everything is also available as plain commands (below), which are what scripts and the
 step-by-step instructions use. Nothing is deleted just by logging in, scanning, or planning.
 
 The usual flow is **log in → scan → list/filter → create a plan → review → delete → report**.
-Run commands from this project folder. Use `uv run unpost`, including the `uv run` prefix,
+Run commands from this project folder. Use `uv run sociyx`, including the `uv run` prefix,
 so the project dependencies are available.
 
 ### Set up this copy
@@ -23,7 +25,7 @@ You already have the project, so you do not need to clone it again:
 cd "/home/amanverasia/Projects/personal_projects/misc/redact.dev - rev"
 uv sync --extra instagram
 uv run playwright install chromium
-uv run unpost --help
+uv run sociyx --help
 ```
 
 Python 3.11 or newer is required. If `uv` is missing, follow the installation instructions
@@ -35,19 +37,19 @@ below. If Chromium reports missing system libraries, run
 These commands use the fake `fixture` account and do not contact a social platform:
 
 ```bash
-uv run unpost login fixture --account alice
-uv run unpost scan fixture
-uv run unpost list fixture --type post --limit 10
-uv run unpost plan create fixture --type post
-uv run unpost plan list
+uv run sociyx login fixture --account alice
+uv run sociyx scan fixture
+uv run sociyx list fixture --type post --limit 10
+uv run sociyx plan create fixture --type post
+uv run sociyx plan list
 ```
 
 The output contains a **plan ID**. In the next commands, replace `PLAN_ID` with that number
 (without adding brackets):
 
 ```bash
-uv run unpost plan show PLAN_ID --all
-uv run unpost plan execute PLAN_ID
+uv run sociyx plan show PLAN_ID --all
+uv run sociyx plan execute PLAN_ID
 ```
 
 The last command is a dry run: it shows what would happen and prints the live command.
@@ -61,21 +63,21 @@ been verified against a real account. Start with a small selection you have revi
 1. **Log in.** Run the following, then finish login in the browser window yourself:
 
    ```bash
-   uv run unpost login instagram
+   uv run sociyx login instagram
    ```
 
    If the browser session is rejected, use the password method. Replace `YOUR_USERNAME`
    with your Instagram username; the password is requested privately in the terminal:
 
    ```bash
-   uv run unpost login instagram --method password --account YOUR_USERNAME
+   uv run sociyx login instagram --method password --account YOUR_USERNAME
    ```
 
 2. **Fetch a small preview of your posts.** This reads data; it does not delete anything:
 
    ```bash
-   uv run unpost scan instagram --type post --max-pages 1
-   uv run unpost list instagram --type post --limit 20
+   uv run sociyx scan instagram --type post --max-pages 1
+   uv run sociyx list instagram --type post --limit 20
    ```
 
    This is only a partial scan. Repeat the scan command to fetch the next page, or omit
@@ -84,8 +86,8 @@ been verified against a real account. Start with a small selection you have revi
 3. **Choose what to delete.** For example, preview posts containing a distinctive word:
 
    ```bash
-   uv run unpost list instagram --type post --keyword "YOUR_CHOSEN_WORD" --limit 100
-   uv run unpost plan create instagram --type post --keyword "YOUR_CHOSEN_WORD"
+   uv run sociyx list instagram --type post --keyword "YOUR_CHOSEN_WORD" --limit 100
+   uv run sociyx plan create instagram --type post --keyword "YOUR_CHOSEN_WORD"
    ```
 
    Replace `YOUR_CHOSEN_WORD` with a word in posts you intend to remove. The plan includes
@@ -96,8 +98,8 @@ been verified against a real account. Start with a small selection you have revi
 4. **Review the entire plan and dry run.** Replace `PLAN_ID` with the ID just printed:
 
    ```bash
-   uv run unpost plan show PLAN_ID --all
-   uv run unpost plan execute PLAN_ID
+   uv run sociyx plan show PLAN_ID --all
+   uv run sociyx plan execute PLAN_ID
    ```
 
    Check the account, item count, and every item. If the selection is wrong, create a new
@@ -107,8 +109,8 @@ been verified against a real account. Start with a small selection you have revi
    structure is shown below; replace both placeholders with your actual values:
 
    ```bash
-   uv run unpost plan execute PLAN_ID --live --confirm 'EXACT_TOKEN_FROM_YOUR_PLAN'
-   uv run unpost report PLAN_ID
+   uv run sociyx plan execute PLAN_ID --live --confirm 'EXACT_TOKEN_FROM_YOUR_PLAN'
+   uv run sociyx report PLAN_ID
    ```
 
    **The command containing `--live` performs real deletion.** Instagram writes are paced
@@ -128,12 +130,12 @@ For other Instagram content, change `--type post` during scanning and filtering:
 
 Comments on other people's posts need your Instagram JSON data export first. Unzip it,
 then import the extracted folder. `ACCOUNT_ID` is the numeric Instagram ID shown by
-`uv run unpost accounts`, rather than your username:
+`uv run sociyx accounts`, rather than your username:
 
 ```bash
-uv run unpost accounts
-uv run unpost import instagram "/path/to/extracted/export" --account ACCOUNT_ID
-uv run unpost list instagram --type comment_export
+uv run sociyx accounts
+uv run sociyx import instagram "/path/to/extracted/export" --account ACCOUNT_ID
+uv run sociyx list instagram --type comment_export
 ```
 
 Importing only adds records to the local database. Use the same plan/review/delete steps
@@ -146,9 +148,9 @@ review, execute, and report flow with that platform name.
 ## Guided TUI
 
 ```bash
-uv run unpost            # opens the guided UI when run in a terminal (no args)
-uv run unpost tui        # same thing
-uv run unpost tui --demo # fake accounts and data in a throw-away folder; real data untouched
+uv run sociyx            # opens the guided UI when run in a terminal (no args)
+uv run sociyx tui        # same thing
+uv run sociyx tui --demo # fake accounts and data in a throw-away folder; real data untouched
 ```
 
 Flow: **Home** (accounts, add account, resume jobs) → **Account** (what is stored per content type,
@@ -177,7 +179,7 @@ quit during a run, the UI asks to pause the job first.
 Your selection survives changing filters; the footer shows `N selected / M shown / T total` and how many
 selected items are currently hidden. Login prompts and browser windows use your real terminal: the UI
 steps aside while you log in and comes back afterwards. The `fixture` platform only appears in the
-account picker in demo mode (or with `UNPOST_TUI_DEMO=1`).
+account picker in demo mode (or with `SOCIYX_TUI_DEMO=1`).
 
 Known limits:
 
@@ -188,7 +190,7 @@ Known limits:
 - Pressing Ctrl+C at a hidden password prompt may swallow a keypress; press it again if nothing
   happens.
 - Logging in through the TUI (it suspends the UI and hands the terminal and Playwright browser to
-  the adapter) has not been tested against a real account. Use `unpost login` in a normal terminal
+  the adapter) has not been tested against a real account. Use `sociyx login` in a normal terminal
   if it misbehaves.
 
 ## What it is and is not
@@ -214,7 +216,7 @@ Known limits:
    confirmation token. Nothing is deleted.
 3. `plan execute` is a dry run by default. `--live` needs `--confirm` with the exact token
    (`plan_id:account_id:count:digest8`).
-4. Before deleting, unpost checks the token, that the export file is unmodified, that the plan items
+4. Before deleting, sociyx checks the token, that the export file is unmodified, that the plan items
    still match their digest, and that the logged-in account is the plan's account.
 5. Each item is re-checked against what you previewed; edited items are skipped, not deleted.
 6. Outcomes are never overstated: "deleted and verified" differs from "deleted, unverified".
@@ -234,7 +236,7 @@ Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 | Fixture | Dev/test only | Fake local data; for demos and tests. |
 | X, Reddit, Threads, others | Researched, not implemented | [docs/PLATFORM_STATUS.md](docs/PLATFORM_STATUS.md) |
 
-`unpost platforms` prints content types, deletable types and history-coverage notes for each
+`sociyx platforms` prints content types, deletable types and history-coverage notes for each
 adapter.
 
 ## Installation on Linux Mint
@@ -253,11 +255,11 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 #   sudo apt install pipx && pipx install uv
 # Open a new shell (or `source ~/.local/bin/env`) so `uv` is on PATH.
 
-git clone <repository-url> unpost
-cd unpost
+git clone https://github.com/amanverasia/sociyx.git
+cd sociyx
 uv sync                              # Python >= 3.11 required; uv can fetch one if needed
 uv run playwright install chromium   # visible browser used for logins
-uv run unpost --help
+uv run sociyx --help
 ```
 
 If Chromium fails to start because of missing system libraries:
@@ -266,30 +268,35 @@ If Chromium fails to start because of missing system libraries:
 uv run playwright install-deps chromium   # uses sudo to install apt packages
 ```
 
-If Playwright's Chromium cannot be started at all, unpost falls back to opening your default browser
+If Playwright's Chromium cannot be started at all, sociyx falls back to opening your default browser
 for OAuth logins.
 
 ### Where data lives
 
-`~/.local/share/unpost` (or `$XDG_DATA_HOME/unpost`). Override with `UNPOST_HOME=/some/dir`.
+`~/.local/share/sociyx` (or `$XDG_DATA_HOME/sociyx`). Override with `SOCIYX_HOME=/some/dir`.
+
+Upgrading from the earlier name (`unpost`)? sociyx keeps using an existing `~/.local/share/unpost`
+folder (and honors `UNPOST_HOME` if `SOCIYX_HOME` is unset) until you switch. Nothing is moved or
+copied automatically because the folder contains credentials. To switch, rename it yourself:
+`mv ~/.local/share/unpost ~/.local/share/sociyx`.
 Directories are created `0700`, session and export files `0600`. See [SECURITY.md](SECURITY.md).
 
 ## Quick start
 
 ### 1. Try it safely with the fixture adapter
 
-Everything below uses fake data. Use a throwaway home if you like: `export UNPOST_HOME=$(mktemp -d)`.
+Everything below uses fake data. Use a throwaway home if you like: `export SOCIYX_HOME=$(mktemp -d)`.
 
 ```bash
-uv run unpost login fixture --account alice
-uv run unpost scan fixture
-uv run unpost list fixture --type post --since 2021-01-01 --until 2021-12-31 --limit 5
-uv run unpost export fixture --type post --format csv --out /tmp/alice-posts.csv
+uv run sociyx login fixture --account alice
+uv run sociyx scan fixture
+uv run sociyx list fixture --type post --since 2021-01-01 --until 2021-12-31 --limit 5
+uv run sociyx export fixture --type post --format csv --out /tmp/alice-posts.csv
 
-uv run unpost plan create fixture --type post --since 2021-01-01 --until 2021-12-31 --exclude-keyword crypto
-uv run unpost plan execute 1                      # dry run, deletes nothing
+uv run sociyx plan create fixture --type post --since 2021-01-01 --until 2021-12-31 --exclude-keyword crypto
+uv run sociyx plan execute 1                      # dry run, deletes nothing
 # Copy the live command printed by the dry run only when ready.
-uv run unpost report 1
+uv run sociyx report 1
 ```
 
 The token printed by `plan create` differs per run (it includes a digest of the items).
@@ -297,18 +304,18 @@ The token printed by `plan create` differs per run (it includes a digest of the 
 ### 2. Bluesky
 
 ```bash
-uv run unpost login bluesky --account you.bsky.social
+uv run sociyx login bluesky --account you.bsky.social
 ```
 
 Default method is `oauth`: a Chromium window opens on Bluesky's own page, where you log in (and pass
-2FA) yourself. unpost never sees your password. Alternative:
+2FA) yourself. sociyx never sees your password. Alternative:
 
 ```bash
-uv run unpost login bluesky --account you.bsky.social --method app-password
+uv run sociyx login bluesky --account you.bsky.social --method app-password
 ```
 
 You create an app password in Bluesky (Settings > Privacy and security > App passwords) and type it
-at unpost's hidden local prompt (and an emailed code if Bluesky asks). **Never paste passwords or
+at sociyx's hidden local prompt (and an emailed code if Bluesky asks). **Never paste passwords or
 tokens into chats or issues.**
 
 Then `scan bluesky` and `plan create bluesky ...` as below. (The adapter can read public repos
@@ -318,9 +325,9 @@ Pace: 1 delete per second by default.
 ### 3. Mastodon
 
 ```bash
-uv run unpost login mastodon --account @you@your.instance
+uv run sociyx login mastodon --account @you@your.instance
 # if your instance rejects the loopback redirect:
-uv run unpost login mastodon --account @you@your.instance --method oob
+uv run sociyx login mastodon --account @you@your.instance --method oob
 ```
 
 `oob` shows an authorization page in the browser and asks you to paste the displayed code at a
@@ -331,10 +338,10 @@ histories take days. Plan around that.
 
 ```bash
 uv sync --extra instagram
-uv run unpost login instagram --account you
+uv run sociyx login instagram --account you
 # or: --method password (hidden prompts), --method sessionfile (existing settings JSON)
-uv run unpost scan instagram --type post --type like --type saved --type dm --type comment
-uv run unpost import instagram ~/ig-export --account 111   # "Download your information" (JSON)
+uv run sociyx scan instagram --type post --type like --type saved --type dm --type comment
+uv run sociyx import instagram ~/ig-export --account 111   # "Download your information" (JSON)
 ```
 
 Pace: 30–45 s between writes, 1–3 min pause every 25, 200/day cap
@@ -346,13 +353,13 @@ See [docs/platforms/instagram.md](docs/platforms/instagram.md).
 ## CLI examples
 
 ```bash
-uv run unpost platforms                         # adapters, content types, history coverage notes
-uv run unpost accounts                          # known accounts
-uv run unpost whoami bluesky                    # verify the session with the platform
-uv run unpost scan bluesky --type post --type like
-uv run unpost scan bluesky --max-pages 5        # partial scan; run again to resume from the saved cursor
-uv run unpost scan bluesky --fresh              # discard the resume point and start over
-uv run unpost status bluesky                    # what is stored locally, per type and state
+uv run sociyx platforms                         # adapters, content types, history coverage notes
+uv run sociyx accounts                          # known accounts
+uv run sociyx whoami bluesky                    # verify the session with the platform
+uv run sociyx scan bluesky --type post --type like
+uv run sociyx scan bluesky --max-pages 5        # partial scan; run again to resume from the saved cursor
+uv run sociyx scan bluesky --fresh              # discard the resume point and start over
+uv run sociyx status bluesky                    # what is stored locally, per type and state
 ```
 
 ### Filters
@@ -372,20 +379,20 @@ Dates are UTC unless you give an offset (`2021-03-31T18:00:00-05:00`). Items wit
 timestamp never match when `--since`/`--until` is used. `--since` after `--until` is an error.
 
 ```bash
-uv run unpost list bluesky --type post --since 2019-01-01 --until 2021-12-31 --keyword crypto --keyword nft --limit 100
-uv run unpost export bluesky --type post --format jsonl            # json (default), jsonl or csv
-uv run unpost export bluesky --type like --out ~/likes.json        # files are written mode 0600
+uv run sociyx list bluesky --type post --since 2019-01-01 --until 2021-12-31 --keyword crypto --keyword nft --limit 100
+uv run sociyx export bluesky --type post --format jsonl            # json (default), jsonl or csv
+uv run sociyx export bluesky --type like --out ~/likes.json        # files are written mode 0600
 ```
 
 ### Plans, dry run, live
 
 ```bash
-uv run unpost plan create bluesky --type post --until 2020-12-31 --exclude-keyword keepme
-uv run unpost plan show 1 --all           # full item list (default shows 50)
-uv run unpost plan list
-uv run unpost plan execute 1              # DRY RUN (default): prints preview and the exact command
-uv run unpost plan execute 1 --live --confirm '<token>'
-uv run unpost plan execute 1 --live --confirm '<token>' --delay 5   # override pacing (seconds between requests)
+uv run sociyx plan create bluesky --type post --until 2020-12-31 --exclude-keyword keepme
+uv run sociyx plan show 1 --all           # full item list (default shows 50)
+uv run sociyx plan list
+uv run sociyx plan execute 1              # DRY RUN (default): prints preview and the exact command
+uv run sociyx plan execute 1 --live --confirm '<token>'
+uv run sociyx plan execute 1 --live --confirm '<token>' --delay 5   # override pacing (seconds between requests)
 ```
 
 Only content types the adapter marks deletable are planned; matching items of other types are
@@ -396,19 +403,19 @@ reported as excluded.
 - **Ctrl+C once**: finish the current item, then pause. **Ctrl+C twice**: stop immediately. An item
   whose request may have been sent is left `in_progress` and is verified (not blindly retried) on
   resume. Exit code 130.
-- From another terminal: `unpost job pause <job_id>` (stops after the current item) or
-  `unpost job cancel <job_id>` (remaining items become `skipped`).
-- `unpost job list`, `unpost job status <job_id>` (counts and recent events).
-- Resume with the same token: `unpost job resume <job_id> --confirm '<token>'` or re-run
+- From another terminal: `sociyx job pause <job_id>` (stops after the current item) or
+  `sociyx job cancel <job_id>` (remaining items become `skipped`).
+- `sociyx job list`, `sociyx job status <job_id>` (counts and recent events).
+- Resume with the same token: `sociyx job resume <job_id> --confirm '<token>'` or re-run
   `plan execute ... --live --confirm ...`.
 - A finished (`completed`/`cancelled`) job cannot be re-run; create a new plan to delete more.
 
 ### Reports
 
 ```bash
-uv run unpost report 1                         # text
-uv run unpost report 1 --format json --out report.json
-uv run unpost report 1 --format csv
+uv run sociyx report 1                         # text
+uv run sociyx report 1 --format json --out report.json
+uv run sociyx report 1 --format csv
 ```
 
 Reports include per-outcome sections, the latest scan status per content type, the platform's history
@@ -442,7 +449,7 @@ notes, and a disclaimer that the report covers only the planned items.
 ```bash
 uv sync
 uv run pytest                         # unit and mock tests; live tests are skipped
-UNPOST_LIVE_TESTS=1 uv run pytest -m live   # read-only requests to public Bluesky/Mastodon endpoints
+SOCIYX_LIVE_TESTS=1 uv run pytest -m live   # read-only requests to public Bluesky/Mastodon endpoints
 ```
 
 Live tests perform no login and no writes. Adding a platform: [docs/ADDING_A_PLATFORM.md](docs/ADDING_A_PLATFORM.md).

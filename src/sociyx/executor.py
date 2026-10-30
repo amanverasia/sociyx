@@ -236,7 +236,7 @@ class Executor:
             return self._stop(job_id, "stopped_blocked", self._block(job_id, e), plan.plan_id)
         except AuthRequired as e:
             return self._stop(job_id, "stopped_auth",
-                              f"not logged in ({e}); log in again with `unpost login {plan.platform}` and resume",
+                              f"not logged in ({e}); log in again with `sociyx login {plan.platform}` and resume",
                               plan.plan_id)
         if live.platform != plan.platform or live.account_id != plan.account_id:
             store.update_job(job_id, status="paused", error="session belongs to a different account")
@@ -415,7 +415,7 @@ class Executor:
                 return "stopped_blocked", self._block(self._job_id, e)
             except AuthRequired as e:
                 return ("stopped_auth", f"login expired or challenged ({e}); log in again with "
-                                        f"`unpost login {plan.platform}` and resume the job")
+                                        f"`sociyx login {plan.platform}` and resume the job")
             except AdapterError:
                 v = VerifyStatus.UNKNOWN
             if v == VerifyStatus.GONE:
@@ -486,7 +486,7 @@ class Executor:
             except AuthRequired as e:
                 store.set_outcome(plan.plan_id, item_id, Outcome.PENDING, "login required; not attempted")
                 return ("stopped_auth",
-                        f"login expired or challenged ({e}); log in again with `unpost login {plan.platform}` "
+                        f"login expired or challenged ({e}); log in again with `sociyx login {plan.platform}` "
                         f"and resume the job")
             except (PermanentError, AdapterError) as e:
                 self._mark_request()
@@ -516,7 +516,7 @@ class Executor:
             except AuthRequired as e:
                 self._finish_item(plan, row, Outcome.DELETED_UNVERIFIED, f"login expired during verification: {e}")
                 return ("stopped_auth", f"login expired or challenged ({e}); log in again with "
-                                        f"`unpost login {plan.platform}` and resume the job")
+                                        f"`sociyx login {plan.platform}` and resume the job")
             if v == VerifyStatus.GONE:
                 self._finish_item(plan, row, Outcome.DELETED_VERIFIED, "", "deleted")
             elif v == VerifyStatus.PRESENT:

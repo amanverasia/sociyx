@@ -7,29 +7,29 @@ from datetime import datetime, timezone
 import pytest
 from textual.widgets import Button, DataTable, Input, OptionList, Select, Static, Tabs
 
-from unpost import paths
-from unpost.adapters.fixture import DemoFixtureAdapter
-from unpost.models import ContentItem
-from unpost.scanning import scan_account
-from unpost.store import Store
-from unpost.tui.app import UnpostApp
-from unpost.tui.dialogs import ConfirmDialog, DateRangeDialog, PlatformPicker
-from unpost.tui.model import BrowseModel
-from unpost.tui.screens.account import AccountScreen
-from unpost.tui.screens.browse import BrowseScreen
-from unpost.tui.screens.home import HomeScreen
-from unpost.tui.screens.resume import ResumeScreen
-from unpost.tui.screens.results import ResultsScreen
-from unpost.tui.screens.review import ReviewScreen
-from unpost.tui.screens.run import RunScreen
-from unpost.tui.screens.scan import ScanScreen
+from sociyx import paths
+from sociyx.adapters.fixture import DemoFixtureAdapter
+from sociyx.models import ContentItem
+from sociyx.scanning import scan_account
+from sociyx.store import Store
+from sociyx.tui.app import SociyxApp
+from sociyx.tui.dialogs import ConfirmDialog, DateRangeDialog, PlatformPicker
+from sociyx.tui.model import BrowseModel
+from sociyx.tui.screens.account import AccountScreen
+from sociyx.tui.screens.browse import BrowseScreen
+from sociyx.tui.screens.home import HomeScreen
+from sociyx.tui.screens.resume import ResumeScreen
+from sociyx.tui.screens.results import ResultsScreen
+from sociyx.tui.screens.review import ReviewScreen
+from sociyx.tui.screens.run import RunScreen
+from sociyx.tui.screens.scan import ScanScreen
 
 ALICE = "fixture:alice"
 NOSLEEP = lambda s: None  # noqa: E731
 
 
 def make_app(faults=None, page_size=7, adapter_cls=DemoFixtureAdapter, **kw):
-    return UnpostApp(demo=True, adapter_factory=lambda platform: adapter_cls(faults=faults or {}, page_size=page_size),
+    return SociyxApp(demo=True, adapter_factory=lambda platform: adapter_cls(faults=faults or {}, page_size=page_size),
                      executor_options={"sleep": NOSLEEP, "min_interval": 0, "verify_delay": 0},
                      scan_options={"sleep": NOSLEEP}, **kw)
 
@@ -174,10 +174,10 @@ def test_add_account_flow_with_fixture():
 
 
 def test_fixture_hidden_outside_demo(monkeypatch):
-    monkeypatch.delenv("UNPOST_TUI_DEMO", raising=False)
-    assert "fixture" not in [n for n, _ in UnpostApp().platforms()]
-    monkeypatch.setenv("UNPOST_TUI_DEMO", "1")
-    assert "fixture" in [n for n, _ in UnpostApp().platforms()]
+    monkeypatch.delenv("SOCIYX_TUI_DEMO", raising=False)
+    assert "fixture" not in [n for n, _ in SociyxApp().platforms()]
+    monkeypatch.setenv("SOCIYX_TUI_DEMO", "1")
+    assert "fixture" in [n for n, _ in SociyxApp().platforms()]
 
 
 def test_login_errors_are_scrubbed(monkeypatch):
@@ -567,11 +567,11 @@ def test_cancel_confirmation_and_cancel():
 
 
 def test_demo_home_is_isolated_and_seeded(monkeypatch, tmp_path):
-    from unpost.tui.demo import prepare_demo_home
+    from sociyx.tui.demo import prepare_demo_home
 
     real = tmp_path / "real"
-    monkeypatch.setenv("UNPOST_HOME", str(real))
-    monkeypatch.setenv("UNPOST_TUI_DEMO", "0")
+    monkeypatch.setenv("SOCIYX_HOME", str(real))
+    monkeypatch.setenv("SOCIYX_TUI_DEMO", "0")
     demo = prepare_demo_home()
     assert demo != real and not real.exists() and str(paths.home()) == str(demo)
     s = Store(paths.db_path())

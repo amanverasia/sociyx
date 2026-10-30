@@ -15,7 +15,7 @@ import httpx
 from ...models import AuthRequired, PermanentError, RateLimited, TransientError, utc
 from ...redact import scrub
 
-USER_AGENT = "unpost/0.1 (+local CLI)"
+USER_AGENT = "sociyx/0.1 (+local CLI)"
 TIMEOUT = 30.0
 
 
@@ -81,7 +81,7 @@ def request(
     if status >= 500:
         raise TransientError(f"Mastodon server error (HTTP {status})")
     if status == 401:
-        raise AuthRequired("authentication failed (HTTP 401); run `unpost login mastodon`")
+        raise AuthRequired("authentication failed (HTTP 401); run `sociyx login mastodon`")
     raise ApiError(status, _error_message(resp))
 
 

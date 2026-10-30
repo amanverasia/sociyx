@@ -122,7 +122,7 @@ def _one_line(text: str, n: int) -> str:
 
 
 def execute_command(plan: Plan) -> str:
-    return f"unpost plan execute {plan.plan_id} --live --confirm '{plan.confirmation_token}'"
+    return f"sociyx plan execute {plan.plan_id} --live --confirm '{plan.confirmation_token}'"
 
 
 def preview(store: Store, plan: Plan, limit: int | None = None) -> str:
@@ -166,7 +166,7 @@ def preview(store: Store, plan: Plan, limit: int | None = None) -> str:
             f"{r['item_id']}  {r['url']}  {_one_line(r['text'], 80)}"
         )
     if len(shown) < len(rows):
-        lines.append(f"      ... {len(rows) - len(shown)} more not shown (use `unpost plan show {plan.plan_id} --all`)")
+        lines.append(f"      ... {len(rows) - len(shown)} more not shown (use `sociyx plan show {plan.plan_id} --all`)")
     lines += [
         "",
         f"Export of exactly these items: {plan.export_path}",

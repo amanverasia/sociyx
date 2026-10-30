@@ -10,11 +10,11 @@ browser, with the user logging in themselves, and with the ToS risk documented i
 
 ## Steps
 
-1. Create `src/unpost/adapters/<name>/` (or a single module) with a class subclassing
-   `unpost.adapters.base.Adapter`.
-2. Register it in `src/unpost/adapters/__init__.py`:
+1. Create `src/sociyx/adapters/<name>/` (or a single module) with a class subclassing
+   `sociyx.adapters.base.Adapter`.
+2. Register it in `src/sociyx/adapters/__init__.py`:
    ```python
-   ADAPTERS = {..., "myplatform": "unpost.adapters.myplatform:MyPlatformAdapter"}
+   ADAPTERS = {..., "myplatform": "sociyx.adapters.myplatform:MyPlatformAdapter"}
    ```
    Imports are lazy, so heavy dependencies only load when used.
 3. Write mock-transport tests (and optional read-only live tests), then docs: `docs/platforms/<name>.md`
@@ -27,8 +27,8 @@ from __future__ import annotations
 from typing import ClassVar
 import httpx
 
-from unpost.adapters.base import Adapter, ScanPage
-from unpost.models import (Account, AuthRequired, ContentItem, DeleteResult, DeleteStatus,
+from sociyx.adapters.base import Adapter, ScanPage
+from sociyx.models import (Account, AuthRequired, ContentItem, DeleteResult, DeleteStatus,
                            PermanentError, RateLimited, TransientError, VerifyStatus)
 
 
@@ -127,7 +127,7 @@ or is unreliable (cached/CDN reads, eventually consistent search, no endpoint). 
 
 ## `discovery_notes`
 
-This text is printed by `unpost platforms`, `scan`, `status` and every report. It must state
+This text is printed by `sociyx platforms`, `scan`, `status` and every report. It must state
 plainly: what history is listed and any known or unverified caps, what is NOT covered (DMs, media,
 copies elsewhere), date-semantics caveats, pacing consequences, and anything unverified. Do not
 overstate. The report disclaimer says a report is not evidence nothing else remains.
@@ -139,7 +139,7 @@ overstate. The report disclaimer says a report is not evidence nothing else rema
   place (they are credentials).
 - Make `repr()` of session classes hide secrets. Corrupt session files should read as "no session",
   never echoing their contents.
-- For OAuth with a loopback redirect, use `unpost.loopback`:
+- For OAuth with a loopback redirect, use `sociyx.loopback`:
   - `CallbackServer(preferred_port=None)`: `start()`, use `redirect_uri` (`http://127.0.0.1:<port>/callback`),
     `wait(timeout)` returns the query params or `None`, then `stop()`. It is single-use and logs
     nothing.
@@ -154,7 +154,7 @@ overstate. The report disclaimer says a report is not evidence nothing else rema
 
 ## Tests to write
 
-Use `httpx.MockTransport` (inject `http=`), and tmp `UNPOST_HOME` (see `tests/conftest.py`; it is
+Use `httpx.MockTransport` (inject `http=`), and tmp `SOCIYX_HOME` (see `tests/conftest.py`; it is
 autouse). Cover at least:
 
 - registry entry and class metadata (`content_types`, `deletable_types` subset, `discovery_notes`)
@@ -165,7 +165,7 @@ autouse). Cover at least:
 - login (including bad state/callback, account mismatch), session file mode 0600, no secrets in error
   messages, logout survives network failure
 - Optional live read-only tests in `tests/test_<name>_live.py`, marked with `pytest.mark.live` and
-  skipped unless `UNPOST_LIVE_TESTS=1` (see `tests/test_bluesky_live.py`). They must perform no login
+  skipped unless `SOCIYX_LIVE_TESTS=1` (see `tests/test_bluesky_live.py`). They must perform no login
   and no writes.
 
 ## Checklist

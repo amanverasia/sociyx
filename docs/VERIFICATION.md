@@ -38,7 +38,7 @@ behave the same way.
 
 ## Live read-only tests
 
-Run with `UNPOST_LIVE_TESTS=1 uv run pytest -m live`. They make unauthenticated GET requests (and one
+Run with `SOCIYX_LIVE_TESTS=1 uv run pytest -m live`. They make unauthenticated GET requests (and one
 PAR request, see below). No login, no tokens, no writes.
 
 | Platform | Test | Result (2026-10-30) |

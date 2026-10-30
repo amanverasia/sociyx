@@ -2,8 +2,8 @@ from datetime import datetime, timezone
 
 import pytest
 
-from unpost.filters import Filter, parse_bound
-from unpost.models import ContentItem
+from sociyx.filters import Filter, parse_bound
+from sociyx.models import ContentItem
 
 
 def item(ts, text="hello", ctype="post"):

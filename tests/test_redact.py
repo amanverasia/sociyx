@@ -1,4 +1,4 @@
-from unpost.redact import scrub
+from sociyx.redact import scrub
 
 
 def test_bearer_and_dpop_tokens_removed():

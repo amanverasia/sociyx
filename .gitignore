@@ -10,6 +10,7 @@ build/
 # Local user data: sessions, browser profiles, databases, exports.
 # These are credentials or personal content and must never be committed.
 .unpost/
+.sociyx/
 *.sqlite
 *.sqlite3
 *.db

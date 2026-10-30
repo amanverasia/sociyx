@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from urllib.parse import urlsplit
 
-USER_AGENT = "unpost/0.1 (+local CLI)"
+USER_AGENT = "sociyx/0.1 (+local CLI)"
 TIMEOUT = 30.0
 PUBLIC_APPVIEW = "https://public.api.bsky.app"
 

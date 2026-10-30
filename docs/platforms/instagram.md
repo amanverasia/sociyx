@@ -1,20 +1,20 @@
 # Instagram (private mobile API via instagrapi; unofficial)
 
-Adapter: `src/unpost/adapters/instagram/`. Uses Instagram's private mobile API through the
+Adapter: `src/sociyx/adapters/instagram/`. Uses Instagram's private mobile API through the
 community `instagrapi` library (`uv sync --extra instagram`, verified against 3.2.2).
 This is **unofficial**: it conflicts with Instagram's Terms of Use and can trigger
-challenges or action blocks. You accepted that risk for your own data; unpost mitigates it
+challenges or action blocks. You accepted that risk for your own data; sociyx mitigates it
 with very slow pacing, stops on any challenge/login prompt, and never tries to bypass one.
 
 ## Risk note
 
 Automating Instagram through the private API can get an account restricted, temporarily
 blocked or challenged, and in the worst case disabled. The account owner accepted that
-risk for their own account. unpost does not claim that Instagram's Terms of Use do not
+risk for their own account. sociyx does not claim that Instagram's Terms of Use do not
 apply to you, and the project does not endorse that argument: acting on your own data
 does not by itself make automation permitted. Slow pacing lowers the chance of a block
 but does not remove it. Never share passwords, session files or tokens in chats or issues;
-unpost only asks for them at local hidden prompts.
+sociyx only asks for them at local hidden prompts.
 
 ## Install
 
@@ -25,10 +25,10 @@ uv run playwright install chromium   # only needed for the browser login
 
 ## Authentication
 
-Three methods (`unpost login instagram [--method browser|password|sessionfile]`):
+Three methods (`sociyx login instagram [--method browser|password|sessionfile]`):
 
 1. **Browser (default).** A visible Chromium window opens on Instagram's login page where
-   **you** log in (2FA/challenges included). unpost never types into the page and never
+   **you** log in (2FA/challenges included). sociyx never types into the page and never
    touches CAPTCHAs; it only polls the browser cookie jar until a `sessionid` appears,
    then exchanges it via `login_by_sessionid`. If the mobile API refuses the browser's
    `sessionid` you get guidance to use `--method password`.
@@ -68,7 +68,7 @@ DMs: only inbox threads reachable via `direct_threads_chunk` (message requests /
 not covered); only your sent messages are listed and unsent. Unsending removes them for
 the other party, but they may already have seen them, got notifications, or exported them.
 Instagram's unsend can report success without effect (see instagrapi issue #890), so
-unpost never trusts the unsend response. Before unsending it locates the message in the
+sociyx never trusts the unsend response. Before unsending it locates the message in the
 thread (up to `dm_lookup_pages=3` pages, newest first) and checks the sender is you; after
 unsending, verification re-reads the thread: message still there is `present`, message
 gone is `gone`, message not located is `UNKNOWN`. A message not found in the lookup window
@@ -76,8 +76,8 @@ is not unsent.
 
 Comments on other people's posts: **no API lists them**. Request your export (Settings →
 Accounts Center → Your information and permissions → Download your information, JSON) and
-run `unpost import instagram <export_dir> [--account <id>]` (`--account` takes the numeric
-id shown by `unpost accounts`). Import only writes records to the local database. It reads
+run `sociyx import instagram <export_dir> [--account <id>]` (`--account` takes the numeric
+id shown by `sociyx accounts`). Import only writes records to the local database. It reads
 `liked_posts.json`, `saved_posts.json`, `post_comments*.json` and `reels_comments*.json`
 anywhere under the folder (likes and saved become `like` / `saved` items that merge with
 API scans; comments become `comment_export`). Unrecognized layouts are logged and skipped. Resolving each export comment
@@ -150,7 +150,7 @@ A 1,000-item cleanup takes ~10+ hours plus pauses.
 
 `adapters/instagram/errors.py` translates instagrapi exceptions:
 
-| instagrapi exception | unpost error | Effect |
+| instagrapi exception | sociyx error | Effect |
 |---|---|---|
 | `FeedbackRequired`, `SentryBlock`, `ProxyAddressIsBlocked` | `ActionBlocked` (cool-down 86,400 s) | job stops with a 24 h cool-down; `--ignore-cooldown` only if you know the block was cleared |
 | `LoginRequired`, `ClientLoginRequired`, `ChallengeError`, `AccountSuspended`, `CaptchaChallengeRequired`, `ReloginAttemptExceeded`, `TwoFactorRequired`, `BadPassword`, `BadCredentials`, `RecaptchaChallengeForm` | `AuthRequired` | job stops; resolve it in the official app or website, then log in again; nothing is retried or bypassed |

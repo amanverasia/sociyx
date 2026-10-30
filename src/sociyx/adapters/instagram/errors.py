@@ -1,4 +1,4 @@
-"""Single place that maps instagrapi exceptions onto unpost's error contract."""
+"""Single place that maps instagrapi exceptions onto sociyx's error contract."""
 
 from __future__ import annotations
 
@@ -37,7 +37,7 @@ def _feedback(exc: BaseException) -> str:
 
 
 def translate(exc: BaseException) -> AdapterError | None:
-    """Return the unpost error for an instagrapi exception, or None if it is not one."""
+    """Return the sociyx error for an instagrapi exception, or None if it is not one."""
     from instagrapi import exceptions as ig
 
     if isinstance(exc, AdapterError):

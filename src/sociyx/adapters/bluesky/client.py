@@ -81,7 +81,7 @@ def raise_for_response(resp: httpx.Response) -> None:
     if error == "AuthFactorTokenRequired":
         raise AuthFactorRequired("a two-factor code is required")
     if status == 401 or error in _AUTH_ERRORS:
-        raise AuthRequired(scrub(f"authentication failed ({error or status}); run `unpost login bluesky`"))
+        raise AuthRequired(scrub(f"authentication failed ({error or status}); run `sociyx login bluesky`"))
     raise XrpcError(status, error, message)
 
 
@@ -168,7 +168,7 @@ class PasswordAuth:
         if resp.status_code >= 500:
             raise TransientError(f"session refresh failed with HTTP {resp.status_code}")
         if resp.status_code != 200:
-            raise AuthRequired("session expired and could not be refreshed; run `unpost login bluesky`")
+            raise AuthRequired("session expired and could not be refreshed; run `sociyx login bluesky`")
         data = resp.json()
         self.session.access_jwt = data["accessJwt"]
         self.session.refresh_jwt = data["refreshJwt"]

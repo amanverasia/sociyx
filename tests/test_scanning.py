@@ -1,9 +1,9 @@
 import pytest
 
-from unpost.adapters.base import ScanPage
-from unpost.adapters.fixture import FixtureAdapter
-from unpost.models import TransientError
-from unpost.scanning import scan_account
+from sociyx.adapters.base import ScanPage
+from sociyx.adapters.fixture import FixtureAdapter
+from sociyx.models import TransientError
+from sociyx.scanning import scan_account
 from conftest import prepare
 
 
@@ -125,7 +125,7 @@ def test_unknown_content_type_rejected(store):
 
 import random
 
-from unpost.models import ActionBlocked, RateLimited
+from sociyx.models import ActionBlocked, RateLimited
 
 
 class DelayedFixture(FixtureAdapter):

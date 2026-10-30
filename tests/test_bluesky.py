@@ -18,26 +18,26 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.utils import encode_dss_signature
 
-from unpost.adapters.base import ScanPage
-from unpost.adapters.bluesky import BlueskyAdapter
-from unpost.adapters.bluesky import dpop
-from unpost.adapters.bluesky.client import OAuthAuth, XrpcClient, XrpcError
-from unpost.adapters.bluesky.identity import resolve_identity
-from unpost.adapters.bluesky.oauth import (
+from sociyx.adapters.base import ScanPage
+from sociyx.adapters.bluesky import BlueskyAdapter
+from sociyx.adapters.bluesky import dpop
+from sociyx.adapters.bluesky.client import OAuthAuth, XrpcClient, XrpcError
+from sociyx.adapters.bluesky.identity import resolve_identity
+from sociyx.adapters.bluesky.oauth import (
     OAuthError,
     OAuthLogin,
     build_client_id,
     discover,
     push_authorization_request,
 )
-from unpost.adapters.bluesky.session import (
+from sociyx.adapters.bluesky.session import (
     OAuthSession,
     PasswordSession,
     load_session,
     save_session,
     session_path,
 )
-from unpost.models import (
+from sociyx.models import (
     Account,
     AuthRequired,
     ContentItem,
@@ -57,7 +57,7 @@ APP_PASSWORD = "abcd-efgh-ijkl-mnop"
 
 @pytest.fixture(autouse=True)
 def _home(tmp_path, monkeypatch):
-    monkeypatch.setenv("UNPOST_HOME", str(tmp_path))
+    monkeypatch.setenv("SOCIYX_HOME", str(tmp_path))
 
 
 class Router:
@@ -405,7 +405,7 @@ def test_unrecoverable_401_is_auth_required():
 
 
 def test_current_account_without_session():
-    with pytest.raises(AuthRequired, match="unpost login bluesky"):
+    with pytest.raises(AuthRequired, match="sociyx login bluesky"):
         BlueskyAdapter(http=Router().client()).current_account(DID)
 
 
@@ -725,7 +725,7 @@ def test_delete_unrecoverable_401_is_auth_required():
 
 def test_delete_without_session_is_auth_required():
     p = FakePDS()
-    from unpost.adapters.bluesky.session import delete_session
+    from sociyx.adapters.bluesky.session import delete_session
     delete_session(DID)
     with pytest.raises(AuthRequired):
         p.adapter().delete(item())
@@ -752,7 +752,7 @@ def test_verify_deleted():
 
 def test_verify_without_session_uses_public_read():
     p = FakePDS()
-    from unpost.adapters.bluesky.session import delete_session
+    from sociyx.adapters.bluesky.session import delete_session
     delete_session(DID)
     assert p.adapter().verify_deleted(item("nope")) == VerifyStatus.GONE
 

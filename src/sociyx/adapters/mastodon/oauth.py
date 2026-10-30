@@ -66,10 +66,10 @@ def register_app(
             base,
             "/api/v1/apps",
             data={
-                "client_name": "unpost",
+                "client_name": "sociyx",
                 "redirect_uris": "\n".join(register_uris),
                 "scopes": SCOPE,
-                "website": "https://github.com/amanverasia/unpost",
+                "website": "https://github.com/amanverasia/sociyx",
             },
         )
     except client.ApiError as e:

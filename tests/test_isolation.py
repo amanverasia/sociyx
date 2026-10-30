@@ -2,13 +2,13 @@ import sqlite3
 
 import pytest
 
-from unpost.adapters.base import ScanPage
-from unpost.adapters.fixture import FixtureAdapter
-from unpost.filters import Filter, select
-from unpost.models import Account, PermanentError
-from unpost.scanning import scan_account
+from sociyx.adapters.base import ScanPage
+from sociyx.adapters.fixture import FixtureAdapter
+from sociyx.filters import Filter, select
+from sociyx.models import Account, PermanentError
+from sociyx.scanning import scan_account
 from conftest import make_executor, prepare
-from unpost.planning import PlanRefused
+from sociyx.planning import PlanRefused
 
 
 def test_select_never_returns_other_accounts_items(store):

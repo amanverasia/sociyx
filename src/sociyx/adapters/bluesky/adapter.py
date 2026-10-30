@@ -172,7 +172,7 @@ class BlueskyAdapter(Adapter):
             return self._clients[did]
         session = load_session(did)
         if session is None:
-            raise AuthRequired("no Bluesky session for this account; run `unpost login bluesky`")
+            raise AuthRequired("no Bluesky session for this account; run `sociyx login bluesky`")
         auth = (
             OAuthAuth(session, self._http)
             if isinstance(session, OAuthSession)

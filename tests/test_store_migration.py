@@ -3,8 +3,8 @@ from __future__ import annotations
 import re
 import sqlite3
 
-from unpost import store as store_mod
-from unpost.store import Store
+from sociyx import store as store_mod
+from sociyx.store import Store
 
 
 def _v1_schema() -> str:

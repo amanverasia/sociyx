@@ -11,12 +11,12 @@ from urllib.parse import parse_qs, urlsplit
 import httpx
 import pytest
 
-from unpost.adapters import adapter_class
-from unpost.adapters.mastodon import MastodonAdapter
-from unpost.adapters.mastodon import oauth as moauth
-from unpost.adapters.mastodon.client import html_to_text
-from unpost.adapters.mastodon.session import Session, load_session, save_session, session_path
-from unpost.models import (
+from sociyx.adapters import adapter_class
+from sociyx.adapters.mastodon import MastodonAdapter
+from sociyx.adapters.mastodon import oauth as moauth
+from sociyx.adapters.mastodon.client import html_to_text
+from sociyx.adapters.mastodon.session import Session, load_session, save_session, session_path
+from sociyx.models import (
     Account,
     AuthRequired,
     ContentItem,
@@ -160,8 +160,8 @@ def test_loopback_login_and_app_cache(srv, http, caplog):
         acct = a.login("@me@Mastodon.Test")
     assert acct == Account("mastodon", f"{HOST}:111", f"@me@{HOST}")
     assert len(regs) == 1 and len(regs[0]) == 2 and regs[0][1] == moauth.OOB
-    # (the simulated browser's own httpx request log legitimately contains the code; check unpost's logs)
-    ours = "\n".join(r.getMessage() for r in caplog.records if r.name.startswith("unpost"))
+    # (the simulated browser's own httpx request log legitimately contains the code; check sociyx's logs)
+    ours = "\n".join(r.getMessage() for r in caplog.records if r.name.startswith("sociyx"))
     assert "the-code" not in ours and TOKEN not in ours
     assert "the-code" not in repr(a.__dict__) and TOKEN not in str(srv.calls[-1].url)
     p = session_path(acct.account_id)

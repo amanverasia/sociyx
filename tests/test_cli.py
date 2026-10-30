@@ -5,8 +5,8 @@ import stat
 
 import pytest
 
-from unpost.adapters.fixture import FixtureAdapter
-from unpost.cli import main
+from sociyx.adapters.fixture import FixtureAdapter
+from sociyx.cli import main
 
 
 def cli(capsys, *argv):
@@ -40,14 +40,14 @@ def test_platforms_and_banner(capsys):
 def test_list_and_export(scanned, tmp_path):
     capsys = scanned
     code, out, _ = cli(capsys, "list", "fixture", "--keyword", "vacation", "--type", "post", "--until", "2021-12-31")
-    assert code == 0 and "Vacation photos" in out and "2 matching items" in out
+    assert code == 0 and "Vacation photos" in out and "3 matching items" in out
     jpath, cpath = tmp_path / "o.json", tmp_path / "o.csv"
     assert cli(capsys, "export", "fixture", "--format", "json", "--out", str(jpath), "--type", "like")[0] == 0
     assert cli(capsys, "export", "fixture", "--format", "csv", "--out", str(cpath), "--type", "like")[0] == 0
     for p in (jpath, cpath):
         assert stat.S_IMODE(os.stat(p).st_mode) == 0o600
     data = json.loads(jpath.read_text())
-    assert data["meta"]["count"] == 10 == len(data["items"]) and data["meta"]["tool"] == "unpost"
+    assert data["meta"]["count"] == 10 == len(data["items"]) and data["meta"]["tool"] == "sociyx"
     rows = list(csv.reader(cpath.open()))
     assert rows[0] == ["platform", "account_id", "item_id", "content_type", "created_at", "url", "text"]
     assert len(rows) == 11
@@ -109,10 +109,10 @@ def test_auth_stop_exit_code_and_resume(scanned, monkeypatch):
     capsys = scanned
     _, out, _ = cli(capsys, "plan", "create", "fixture", "--type", "like")
     token = token_from(out)
-    monkeypatch.setenv("UNPOST_FIXTURE_FAULTS", json.dumps({"auth_after": 4}))
+    monkeypatch.setenv("SOCIYX_FIXTURE_FAULTS", json.dumps({"auth_after": 4}))
     code, out, _ = cli(capsys, "plan", "execute", "1", "--live", "--confirm", token)
     assert code == 3 and "stopped_auth" in out and "Not attempted (pending)" in out
-    monkeypatch.delenv("UNPOST_FIXTURE_FAULTS")
+    monkeypatch.delenv("SOCIYX_FIXTURE_FAULTS")
     assert cli(capsys, "login", "fixture")[0] == 0
     code, out, _ = cli(capsys, "job", "resume", "1", "--confirm", token)
     assert code == 0
@@ -134,7 +134,7 @@ def test_new_flags_in_help(capsys):
 
 def test_scan_blocked_exits_3_with_guidance(capsys, monkeypatch):
     assert cli(capsys, "login", "fixture", "--account", "alice")[0] == 0
-    monkeypatch.setenv("UNPOST_FIXTURE_FAULTS", json.dumps({"scan_blocked": True}))
+    monkeypatch.setenv("SOCIYX_FIXTURE_FAULTS", json.dumps({"scan_blocked": True}))
     code, out, err = cli(capsys, "scan", "fixture")
     assert code == 3 and "Stop automation" in err
 
@@ -143,14 +143,14 @@ def test_blocked_job_exit_3_status_and_resume_refused(scanned, monkeypatch):
     capsys = scanned
     code, out, _ = cli(capsys, "plan", "create", "fixture", "--type", "post")
     token = token_from(out)
-    monkeypatch.setenv("UNPOST_FIXTURE_FAULTS", json.dumps({"action_blocked": ["post/alice/0019", "post/alice/0000"]}))
+    monkeypatch.setenv("SOCIYX_FIXTURE_FAULTS", json.dumps({"action_blocked": ["post/alice/0019", "post/alice/0000"]}))
     code, out, err = cli(capsys, "plan", "execute", "1", "--live", "--confirm", token, "--delay", "0")
     assert code == 3 and "stopped_blocked" in out
     code, out, _ = cli(capsys, "job", "status", "1")
     assert "cool-down" in out and "--ignore-cooldown" in out
     code, out, err = cli(capsys, "job", "resume", "1", "--confirm", token, "--delay", "0")
     assert code == 2 and "do not resume before" in err
-    monkeypatch.delenv("UNPOST_FIXTURE_FAULTS")
+    monkeypatch.delenv("SOCIYX_FIXTURE_FAULTS")
     code, out, err = cli(capsys, "job", "resume", "1", "--confirm", token, "--delay", "0", "--ignore-cooldown")
     assert code == 0
 
@@ -159,19 +159,19 @@ def _py(code, **kw):
     import subprocess
     import sys
 
-    env = {**os.environ, "UNPOST_HOME": os.environ["UNPOST_HOME"]}
+    env = {**os.environ, "SOCIYX_HOME": os.environ["SOCIYX_HOME"]}
     return subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, stdin=subprocess.DEVNULL,
                           env=env, timeout=60, **kw)
 
 
-def test_bare_unpost_without_tty_prints_help_without_importing_textual():
-    r = _py("import sys; from unpost.cli import main; rc = main([]); print('RC', rc, 'textual' in sys.modules)")
+def test_bare_sociyx_without_tty_prints_help_without_importing_textual():
+    r = _py("import sys; from sociyx.cli import main; rc = main([]); print('RC', rc, 'textual' in sys.modules)")
     assert r.returncode == 0, r.stderr
-    assert "usage: unpost" in r.stdout and "tui" in r.stdout and "RC 0 False" in r.stdout
+    assert "usage: sociyx" in r.stdout and "tui" in r.stdout and "RC 0 False" in r.stdout
 
 
 def test_other_commands_do_not_import_textual():
-    r = _py("import sys; from unpost.cli import main; main(['platforms']); print('TEXTUAL', 'textual' in sys.modules)")
+    r = _py("import sys; from sociyx.cli import main; main(['platforms']); print('TEXTUAL', 'textual' in sys.modules)")
     assert "TEXTUAL False" in r.stdout
 
 
@@ -185,11 +185,11 @@ def test_tui_help_and_non_tty_refusal(capsys):
     assert code == 2 and "interactive terminal" in err
 
 
-def test_bare_unpost_on_a_tty_launches_the_tui(monkeypatch):
+def test_bare_sociyx_on_a_tty_launches_the_tui(monkeypatch):
     import sys
 
     launched = []
     monkeypatch.setattr(sys.stdin, "isatty", lambda: True, raising=False)
     monkeypatch.setattr(sys.stdout, "isatty", lambda: True, raising=False)
-    monkeypatch.setattr("unpost.tui.run_tui", lambda demo=False: launched.append(demo) or 0)
+    monkeypatch.setattr("sociyx.tui.run_tui", lambda demo=False: launched.append(demo) or 0)
     assert main([]) == 0 and launched == [False]

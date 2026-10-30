@@ -1,4 +1,4 @@
-"""Read-only live checks against real Bluesky servers. Run with UNPOST_LIVE_TESTS=1.
+"""Read-only live checks against real Bluesky servers. Run with SOCIYX_LIVE_TESTS=1.
 
 No login, no writes, no deletes. The PAR test creates a single-use request_uri that
 expires unused; it touches no account.
@@ -11,20 +11,20 @@ import os
 import httpx
 import pytest
 
-from unpost.adapters.bluesky import BlueskyAdapter, dpop
-from unpost.adapters.bluesky.identity import resolve_identity
-from unpost.adapters.bluesky.oauth import SCOPE, build_client_id, discover, push_authorization_request
-from unpost.models import Account, ContentItem, VerifyStatus
+from sociyx.adapters.bluesky import BlueskyAdapter, dpop
+from sociyx.adapters.bluesky.identity import resolve_identity
+from sociyx.adapters.bluesky.oauth import SCOPE, build_client_id, discover, push_authorization_request
+from sociyx.models import Account, ContentItem, VerifyStatus
 
 pytestmark = [
     pytest.mark.live,
-    pytest.mark.skipif(os.environ.get("UNPOST_LIVE_TESTS") != "1", reason="set UNPOST_LIVE_TESTS=1"),
+    pytest.mark.skipif(os.environ.get("SOCIYX_LIVE_TESTS") != "1", reason="set SOCIYX_LIVE_TESTS=1"),
 ]
 
 
 @pytest.fixture(autouse=True)
 def _home(tmp_path, monkeypatch):
-    monkeypatch.setenv("UNPOST_HOME", str(tmp_path))
+    monkeypatch.setenv("SOCIYX_HOME", str(tmp_path))
 
 
 @pytest.fixture

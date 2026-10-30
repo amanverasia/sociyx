@@ -11,16 +11,16 @@ from types import SimpleNamespace
 
 import pytest
 
-from unpost.adapters import adapter_class
-from unpost.adapters.instagram import InstagramAdapter, iter_export_items
-from unpost.adapters.instagram import errors as ierrors
-from unpost.adapters.instagram import mapping as imapping
-from unpost.adapters.instagram.session import (
+from sociyx.adapters import adapter_class
+from sociyx.adapters.instagram import InstagramAdapter, iter_export_items
+from sociyx.adapters.instagram import errors as ierrors
+from sociyx.adapters.instagram import mapping as imapping
+from sociyx.adapters.instagram.session import (
     delete_settings,
     load_settings,
     save_settings,
 )
-from unpost.models import (
+from sociyx.models import (
     Account,
     AuthRequired,
     ContentItem,
@@ -184,14 +184,14 @@ def test_error_mapping():
     from instagrapi import exceptions as ig
 
     assert isinstance(ierrors.translate(ig.MediaNotFound("x")), ierrors.Gone)
-    assert isinstance(ierrors.translate(ig.FeedbackRequired("spam")), type(__import__("unpost.models", fromlist=["ActionBlocked"]).ActionBlocked("x")))
+    assert isinstance(ierrors.translate(ig.FeedbackRequired("spam")), type(__import__("sociyx.models", fromlist=["ActionBlocked"]).ActionBlocked("x")))
     auth = ierrors.translate(ig.LoginRequired("out"))
     assert isinstance(auth, AuthRequired)
     rl = ierrors.translate(ig.RateLimitError("slow"))
     assert isinstance(rl, RateLimited)
     assert rl.retry_after == 900.0
     trans = ierrors.translate(ig.ClientConnectionError("net"))
-    from unpost.models import TransientError
+    from sociyx.models import TransientError
 
     assert isinstance(trans, TransientError)
 
@@ -274,7 +274,7 @@ def test_dm_scan_lists_only_own_messages():
 
 
 def test_cli_import_export_offline(capsys, tmp_path):
-    from unpost.cli import main
+    from sociyx.cli import main
 
     exp = tmp_path / "export"
     exp.mkdir()
@@ -320,7 +320,7 @@ def test_dm_unsend_requires_verified_sender(state, sender, expected):
 
 
 def test_cli_session_file_reaches_adapter(monkeypatch, tmp_path, capsys):
-    from unpost import cli
+    from sociyx import cli
 
     received = {}
 
@@ -345,7 +345,7 @@ def test_cli_session_file_reaches_adapter(monkeypatch, tmp_path, capsys):
 
 
 def test_cli_import_rejects_file(tmp_path, capsys):
-    from unpost.cli import main
+    from sociyx.cli import main
 
     path = tmp_path / "export.zip"
     path.write_bytes(b"not an extracted directory")

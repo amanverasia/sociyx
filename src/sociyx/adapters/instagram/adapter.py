@@ -85,7 +85,7 @@ class InstagramAdapter(Adapter):
         "dm": "direct messages YOU sent (unsent for everyone), across inbox threads",
         "comment": "your comments on YOUR OWN posts",
         "comment_export": "your comments on OTHER people's posts; only from a data export "
-        "(`unpost import instagram <export_dir>`); resolved best-effort at delete time",
+        "(`sociyx import instagram <export_dir>`); resolved best-effort at delete time",
     }
     deletable_types: ClassVar[frozenset[str]] = frozenset(content_types)
     # Very slow on purpose: 30-45 s between writes, a 1-3 minute pause every 25, 200/day maximum.
@@ -99,7 +99,7 @@ class InstagramAdapter(Adapter):
     discovery_notes: ClassVar[str] = (
         "UNOFFICIAL: uses Instagram's private mobile API through the community `instagrapi` library.\n"
         "This conflicts with Instagram's Terms of Use and can trigger challenges or action blocks.\n"
-        "You accepted that risk for your own data; unpost mitigates it with very slow pacing (30-45 s\n"
+        "You accepted that risk for your own data; sociyx mitigates it with very slow pacing (30-45 s\n"
         "per write, long pauses, a 200/day cap), stops on any challenge/login prompt, and never tries\n"
         "to bypass one. For DM jobs use a lower cap, e.g. `--daily-cap 100`.\n"
         "Login: a visible browser where YOU log in (default), or `password`, or an existing instagrapi\n"
@@ -115,7 +115,7 @@ class InstagramAdapter(Adapter):
         "    unsend can report success without effect, so every unsend is re-read and verified.\n"
         "  - comments on other people's posts: NO API lists them. Request your data export (Settings ->\n"
         "    Accounts Center -> Your information and permissions -> Download your information, JSON) and\n"
-        "    import it. Resolving each export comment is fuzzy: unpost searches the owner's recent posts\n"
+        "    import it. Resolving each export comment is fuzzy: sociyx searches the owner's recent posts\n"
         "    for an exact text match within +/-120 s; if not found it reports it so you can delete it\n"
         "    manually (Settings -> Your activity -> Comments).\n"
         "NOT covered: likes on comments, story replies, tags, replies to comments, follows/followers.\n"
@@ -176,7 +176,7 @@ class InstagramAdapter(Adapter):
             return c
         settings = load_settings(account_id, self._base())
         if settings is None:
-            raise AuthRequired("no Instagram session for this account; run `unpost login instagram`")
+            raise AuthRequired("no Instagram session for this account; run `sociyx login instagram`")
         c = self._new_client()
         c.set_settings(settings)
         uid = getattr(c, "user_id", None)
@@ -254,7 +254,7 @@ class InstagramAdapter(Adapter):
         except ig.ChallengeError as e:
             raise AuthRequired(
                 "Instagram wants a challenge/verification. Complete it in the official app or website, "
-                "then try logging in again. unpost will not attempt to solve it."
+                "then try logging in again. sociyx will not attempt to solve it."
             ) from e
         except (ig.BadPassword, ig.BadCredentials) as e:
             raise AuthRequired("Instagram rejected the username or password") from e
@@ -306,7 +306,7 @@ class InstagramAdapter(Adapter):
         if content_type not in self.content_types:
             raise PermanentError(f"unknown Instagram content type {content_type!r}")
         if content_type == "comment_export":
-            return ScanPage([], None)  # cannot be listed through the API; use `unpost import instagram`
+            return ScanPage([], None)  # cannot be listed through the API; use `sociyx import instagram`
         c = self._client(account.account_id)
         st = _load(cursor)
         with map_exceptions():

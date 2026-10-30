@@ -37,7 +37,7 @@ def render_export(items: list[ContentItem], fmt: str, meta: dict | None = None) 
         full_meta = {
             **(meta or {}),
             "generated_at": to_iso(datetime.now(timezone.utc)),
-            "tool": "unpost",
+            "tool": "sociyx",
             "count": len(items),
         }
         return json.dumps({"meta": full_meta, "items": [_item_dict(i) for i in items]},

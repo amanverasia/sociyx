@@ -1,12 +1,12 @@
 # Mastodon
 
-Adapter: `src/unpost/adapters/mastodon/`. Works against the Mastodon REST API of your **home
+Adapter: `src/sociyx/adapters/mastodon/`. Works against the Mastodon REST API of your **home
 instance**. Other servers implementing the Mastodon API may work; only Mastodon is considered tested
 (mock tests, plus live read-only runs on mastodon.social).
 
 ## Authentication
 
-`unpost login mastodon --account @you@instance` (or just the instance name).
+`sociyx login mastodon --account @you@instance` (or just the instance name).
 
 1. Registers an OAuth application on your instance (`POST /api/v1/apps`) with scopes
    `read:accounts read:statuses read:favourites read:bookmarks write:statuses write:favourites
@@ -15,11 +15,11 @@ instance**. Other servers implementing the Mastodon API may work; only Mastodon 
 2. **Loopback (default).** Single-use callback server on `127.0.0.1` (port 53682 if free, else
    ephemeral; `/callback`). A visible Chromium window opens on your instance's authorization page; you
    log in and approve there. Authorization code flow with PKCE S256 and a random `state`.
-3. If the instance rejects the loopback redirect URI at registration, unpost falls back automatically to
+3. If the instance rejects the loopback redirect URI at registration, sociyx falls back automatically to
    the manual flow.
 4. **`--method oob`.** Redirect `urn:ietf:wg:oauth:2.0:oob`: the instance displays a code, you paste
    it at a hidden prompt.
-5. unpost verifies the token (`verify_credentials`), requires the username to match the one you asked
+5. sociyx verifies the token (`verify_credentials`), requires the username to match the one you asked
    for (otherwise it revokes the token and refuses), and stores
    `secrets/mastodon/sessions/<instance>_<id>.json` (0600). Account id is `<instance>:<numeric id>`.
 

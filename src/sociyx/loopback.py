@@ -26,7 +26,7 @@ class _Handler(BaseHTTPRequestHandler):
         pass
 
     def _reply(self, status: int, text: str) -> None:
-        body = f"<!doctype html><title>unpost</title><p>{text}</p>".encode()
+        body = f"<!doctype html><title>sociyx</title><p>{text}</p>".encode()
         self.send_response(status)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))

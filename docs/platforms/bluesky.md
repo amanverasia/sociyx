@@ -1,6 +1,6 @@
 # Bluesky (AT Protocol)
 
-Adapter: `src/unpost/adapters/bluesky/`. Records live in your own repository on your PDS; unpost lists
+Adapter: `src/sociyx/adapters/bluesky/`. Records live in your own repository on your PDS; sociyx lists
 and deletes them there.
 
 ## Authentication
@@ -19,14 +19,14 @@ DID document's `alsoKnownAs` and a warning is logged if not bidirectionally veri
    `atproto transition:generic` (transitional; may change).
 4. Push the authorization request (PAR) with a DPoP proof, retrying once with the server-provided nonce.
 5. A visible Chromium window opens (persistent profile in `secrets/bluesky/browser-profile`). You
-   log in, pass 2FA and approve on Bluesky's page. unpost never sees your password.
+   log in, pass 2FA and approve on Bluesky's page. sociyx never sees your password.
 6. The callback must carry the expected `state` and `iss`; the code is exchanged for tokens; the
    returned `sub` must equal the DID you asked for.
 7. Session (access/refresh tokens, DPoP key, nonces) is saved to `secrets/bluesky/<did>.json` (0600).
    Access tokens are refreshed on 401 and the refreshed tokens are persisted.
 
 **App password (`--method app-password`).** You create an app password in Bluesky (Settings >
-Privacy and security > App passwords) and type it at a hidden prompt. unpost calls
+Privacy and security > App passwords) and type it at a hidden prompt. sociyx calls
 `com.atproto.server.createSession` on your PDS; if the server demands an emailed code
 (`AuthFactorTokenRequired`) you are prompted for it. The DID in the response must match. Tokens
 (`accessJwt`/`refreshJwt`) are stored 0600 and refreshed with `refreshSession`.
@@ -75,7 +75,7 @@ is expected to take a few hours; the 35,000/day budget is the practical ceiling.
 
 ## Verification method
 
-After a delete, unpost reads the record directly from the PDS via `getRecord` (the source of truth)
+After a delete, sociyx reads the record directly from the PDS via `getRecord` (the source of truth)
 and reports `deleted_verified` on `RecordNotFound`, retrying a few seconds apart if it still appears.
 Network failures during the check give `UNKNOWN` (`deleted_unverified`). AppView, search and feeds may
 lag behind the PDS.

@@ -25,8 +25,8 @@ from .styles import CSS
 FIXTURE_BANNER = "FIXTURE: fake data. Nothing real is touched."
 
 
-class UnpostApp(App[None]):
-    TITLE = "unpost"
+class SociyxApp(App[None]):
+    TITLE = "sociyx"
     CSS = CSS
     BINDINGS = [
         Binding("ctrl+q", "quit", "Quit", priority=True),
@@ -43,7 +43,7 @@ class UnpostApp(App[None]):
         scan_options: dict[str, Any] | None = None,
     ):
         super().__init__()
-        self.demo = demo or os.environ.get("UNPOST_TUI_DEMO") == "1"
+        self.demo = demo or os.environ.get("SOCIYX_TUI_DEMO") == "1"
         self._adapter_factory = adapter_factory
         self.executor_options = executor_options or {}  # e.g. sleep/min_interval, for tests
         self.scan_options = scan_options or {}  # e.g. sleep, for tests

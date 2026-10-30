@@ -1,4 +1,4 @@
-"""Read-only live checks against mastodon.social. Run with UNPOST_LIVE_TESTS=1.
+"""Read-only live checks against mastodon.social. Run with SOCIYX_LIVE_TESTS=1.
 
 No app registration, no login, no writes. Only unauthenticated public GETs.
 """
@@ -10,13 +10,13 @@ import os
 import httpx
 import pytest
 
-from unpost.adapters.mastodon import MastodonAdapter
-from unpost.adapters.mastodon.client import next_max_id
-from unpost.models import Account, AuthRequired, VerifyStatus
+from sociyx.adapters.mastodon import MastodonAdapter
+from sociyx.adapters.mastodon.client import next_max_id
+from sociyx.models import Account, AuthRequired, VerifyStatus
 
 pytestmark = [
     pytest.mark.live,
-    pytest.mark.skipif(os.environ.get("UNPOST_LIVE_TESTS") != "1", reason="set UNPOST_LIVE_TESTS=1"),
+    pytest.mark.skipif(os.environ.get("SOCIYX_LIVE_TESTS") != "1", reason="set SOCIYX_LIVE_TESTS=1"),
 ]
 
 HOST = "mastodon.social"
@@ -26,7 +26,7 @@ SEEN: list[httpx.Response] = []
 
 @pytest.fixture(autouse=True)
 def _home(tmp_path, monkeypatch):
-    monkeypatch.setenv("UNPOST_HOME", str(tmp_path))
+    monkeypatch.setenv("SOCIYX_HOME", str(tmp_path))
 
 
 @pytest.fixture
@@ -72,7 +72,7 @@ def test_public_statuses_two_pages(http, acct):
 
 
 def test_nonexistent_status_is_gone(http, acct):
-    from unpost.models import ContentItem
+    from sociyx.models import ContentItem
 
     a = MastodonAdapter(http=http)
     it = ContentItem("mastodon", acct.account_id, NOPE, "post", None, raw={"status_id": NOPE})

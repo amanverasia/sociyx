@@ -60,7 +60,7 @@ def _verified_account(store: Store, adapter, platform: str, ref: str | None):
     try:
         live = adapter.current_account(acct.account_id)
     except AuthRequired as e:
-        raise ValueError(f"not logged in as {acct.handle or acct.account_id} ({e}); run `unpost login {platform}`")
+        raise ValueError(f"not logged in as {acct.handle or acct.account_id} ({e}); run `sociyx login {platform}`")
     if live.account_id != acct.account_id:
         raise ValueError(f"session belongs to {live.account_id}, not {acct.account_id}; refusing")
     store.upsert_account(live)
@@ -143,7 +143,7 @@ def cmd_whoami(args, store) -> int:
 def cmd_accounts(args, store) -> int:
     rows = store.list_accounts()
     if not rows:
-        print("no accounts known yet; run `unpost login PLATFORM`")
+        print("no accounts known yet; run `sociyx login PLATFORM`")
         return 0
     print(_table(["platform", "handle", "account_id", "last verified"],
                  [[r["platform"], r["handle"], r["account_id"], r["last_verified_at"] or "never"] for r in rows]))
@@ -164,7 +164,7 @@ def cmd_scan(args, store) -> int:
         print(f"scan stopped: {scrub(str(e))}\n{e.guidance()}", file=sys.stderr)
         return 3
     except AuthRequired as e:
-        print(f"scan stopped: login required ({scrub(str(e))}); run `unpost login {args.platform}`", file=sys.stderr)
+        print(f"scan stopped: login required ({scrub(str(e))}); run `sociyx login {args.platform}`", file=sys.stderr)
         return 3
     finally:
         adapter.close()
@@ -189,7 +189,7 @@ def cmd_status(args, store) -> int:
         print(_table(["type", "state", "count", "oldest", "newest"],
                      [[r["content_type"], r["state"], r["n"], r["oldest"] or "-", r["newest"] or "-"] for r in counts]))
     else:
-        print("no items stored; run `unpost scan`")
+        print("no items stored; run `sociyx scan`")
     print("\nlatest scans:")
     for s in store.latest_scans(acct.platform, acct.account_id):
         label = {"complete": "complete", "failed": "failed"}.get(s["status"], "partial")
@@ -236,7 +236,7 @@ def cmd_plan_create(args, store) -> int:
     acct = store.resolve_account(args.platform, args.account)
     plan = create_plan(store, args.platform, acct, _filter(args, args.platform))
     print(preview(store, plan, limit=50))
-    print(f"\nNothing has been deleted. Review with `unpost plan show {plan.plan_id} --all`.")
+    print(f"\nNothing has been deleted. Review with `sociyx plan show {plan.plan_id} --all`.")
     return 0
 
 
@@ -275,7 +275,7 @@ def _run_live(store: Store, plan, confirm: str, delay: float | None, daily_cap: 
         result = ex.run(plan.plan_id, confirm)
     except KeyboardInterrupt:
         print("\ninterrupted. The in-flight item (if any) is marked unknown; resume with "
-              f"`unpost plan execute {plan.plan_id} --live --confirm '{plan.confirmation_token}'`.")
+              f"`sociyx plan execute {plan.plan_id} --live --confirm '{plan.confirmation_token}'`.")
         return 130
     finally:
         adapter.close()
@@ -426,7 +426,7 @@ def _add_safety_flags(p: argparse.ArgumentParser) -> None:
 
 def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(
-        prog="unpost", description="Local-first bulk cleanup of your OWN social media history. "
+        prog="sociyx", description="Local-first bulk cleanup of your OWN social media history. "
         "Run with no arguments in a terminal for the guided UI.")
     ap.add_argument("-v", "--verbose", action="store_true")
     sub = ap.add_subparsers(dest="command", required=True)
@@ -436,7 +436,7 @@ def build_parser() -> argparse.ArgumentParser:
         p.set_defaults(func=func)
         return p
 
-    p = add("tui", cmd_tui, "open the guided terminal UI (same as running `unpost` with no arguments)")
+    p = add("tui", cmd_tui, "open the guided terminal UI (same as running `sociyx` with no arguments)")
     p.add_argument("--demo", action="store_true",
                    help="try everything with fake data in a throw-away folder; your real data is not touched")
     add("platforms", cmd_platforms, "list supported platforms")
@@ -514,7 +514,7 @@ def cmd_tui(args, store=None) -> int:
     """Launch the guided UI. Textual is imported only here, so other commands never pay for it."""
     if not (sys.stdin.isatty() and sys.stdout.isatty()):
         print("error: the guided UI needs an interactive terminal; use the regular subcommands instead "
-              "(see `unpost --help`).", file=sys.stderr)
+              "(see `sociyx --help`).", file=sys.stderr)
         return 2
     if args.demo:
         from .tui.demo import prepare_demo_home
@@ -533,7 +533,7 @@ def cmd_tui(args, store=None) -> int:
 def main(argv: list[str] | None = None) -> int:
     if argv is None:
         argv = sys.argv[1:]
-    if not argv:  # bare `unpost`: guided UI on a terminal, plain help otherwise (pipes, scripts, CI)
+    if not argv:  # bare `sociyx`: guided UI on a terminal, plain help otherwise (pipes, scripts, CI)
         if sys.stdin.isatty() and sys.stdout.isatty():
             return cmd_tui(argparse.Namespace(demo=False))
         build_parser().print_help()

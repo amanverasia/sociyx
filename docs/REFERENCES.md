@@ -1,6 +1,6 @@
 # References and licenses
 
-unpost was designed after looking at how other cleanup tools work. **No code was copied from any of
+sociyx was designed after looking at how other cleanup tools work. **No code was copied from any of
 them.** Ideas only, as noted.
 
 | Project | License | What we took (ideas only) |
@@ -15,7 +15,7 @@ them.** Ideas only, as noted.
 Redact.dev is proprietary. The user supplied the Redact desktop AppImage. A static look at the bundled
 terms found a clause prohibiting reverse engineering and analysis, and the AppImage is only a bootstrap
 that downloads its platform modules at runtime. We therefore stopped, analyzed none of Redact's code,
-and use **no Redact code, branding or assets**. unpost is inspired by the general idea of bulk-cleaning
+and use **no Redact code, branding or assets**. sociyx is inspired by the general idea of bulk-cleaning
 your own social history, which is not protected, and is otherwise independent.
 
 The AppImage, if present in a working copy, is excluded from Git (`*.AppImage` in `.gitignore`) and

@@ -243,7 +243,7 @@ class Store:
         if ref is not None:
             rows = [r for r in rows if ref in (r["account_id"], r["handle"])]
         if not rows:
-            raise LookupError(f"no known {platform} account matching {ref!r}; run `unpost login {platform}` first")
+            raise LookupError(f"no known {platform} account matching {ref!r}; run `sociyx login {platform}` first")
         if len(rows) > 1:
             names = ", ".join(f"{r['handle']} ({r['account_id']})" for r in rows)
             raise LookupError(f"several {platform} accounts known ({names}); pass --account")

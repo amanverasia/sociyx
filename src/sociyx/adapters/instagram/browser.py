@@ -64,7 +64,7 @@ def playwright_runner(profile_dir: Path, url: str, timeout: float) -> dict[str, 
         page = ctx.pages[0] if ctx.pages else ctx.new_page()
         page.goto(url)
         print("Log in to Instagram in the browser window (including any 2FA or challenge).")
-        print("This window is yours: unpost will not type anything. Press Ctrl+C to cancel.")
+        print("This window is yours: sociyx will not type anything. Press Ctrl+C to cancel.")
         return wait_for_session(lambda: ctx.cookies(["https://www.instagram.com"]), timeout)
     finally:
         for fn in ((ctx.close if ctx else None), pw.stop):

@@ -8,10 +8,10 @@ from typing import Any
 from .base import Adapter, ScanPage
 
 ADAPTERS: dict[str, str] = {
-    "fixture": "unpost.adapters.fixture:FixtureAdapter",
-    "bluesky": "unpost.adapters.bluesky:BlueskyAdapter",
-    "mastodon": "unpost.adapters.mastodon:MastodonAdapter",
-    "instagram": "unpost.adapters.instagram:InstagramAdapter",
+    "fixture": "sociyx.adapters.fixture:FixtureAdapter",
+    "bluesky": "sociyx.adapters.bluesky:BlueskyAdapter",
+    "mastodon": "sociyx.adapters.mastodon:MastodonAdapter",
+    "instagram": "sociyx.adapters.instagram:InstagramAdapter",
 }
 
 

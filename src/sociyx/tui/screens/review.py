@@ -69,7 +69,7 @@ class ReviewScreen(Screen):
         yield Static(Text(f"{', '.join(per_type)}.  Dates: {span}" + (f" (+{undated} undated)" if undated else "")),
                      classes="hint")
         yield Static(Text(describe_pacing(cls, len(self.items))), classes="hint")
-        warn = ["This cannot be undone. unpost cannot restore what it deletes, and the platform may not either."]
+        warn = ["This cannot be undone. sociyx cannot restore what it deletes, and the platform may not either."]
         warn += [TYPE_WARNINGS[t] for t in sorted({i.content_type for i in self.items}) if t in TYPE_WARNINGS]
         yield Static(Text("\n".join(warn)), classes="danger")
         yield DataTable(id="items", cursor_type="row")
@@ -105,7 +105,7 @@ class ReviewScreen(Screen):
             return None
         if plan.item_count != len(self.items):
             self._message(f"Plan {plan.plan_id} holds {plan.item_count} items, not the {len(self.items)} you "
-                          "selected, so nothing was started. Check it with `unpost plan show`.")
+                          "selected, so nothing was started. Check it with `sociyx plan show`.")
             return None
         return plan
 
@@ -133,7 +133,7 @@ class ReviewScreen(Screen):
             return
         body = (f"Plan {plan.plan_id} saved with {plan.item_count} items. Nothing was deleted.\n"
                 f"Export of exactly these items: {plan.export_path}\n"
-                f"Review later: unpost plan show {plan.plan_id} --all\nTo delete: {execute_command(plan)}\n"
+                f"Review later: sociyx plan show {plan.plan_id} --all\nTo delete: {execute_command(plan)}\n"
                 f"(data folder: {paths.home()})")
         self.app.push_screen(InfoDialog("Plan saved", body), lambda _: self.app.pop_to(HomeScreen))  # type: ignore[attr-defined]
 

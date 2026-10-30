@@ -3,7 +3,7 @@
 Adapters do platform I/O only. Filtering, export, plans, job state, retries,
 pacing and reporting are shared code and must not be reimplemented here.
 
-Error contract (see unpost.models):
+Error contract (see sociyx.models):
   AuthRequired    session missing/expired or a challenge (CAPTCHA, re-login) -> executor stops
   RateLimited     platform throttled us; carries retry_after seconds if known
   TransientError  network/5xx/timeouts; executor retries a bounded number of times

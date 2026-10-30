@@ -122,7 +122,7 @@ class MastodonAdapter(Adapter):
     def _session(self, account_id: str) -> Session:
         s = self._sessions.get(account_id) or load_session(account_id)
         if s is None:
-            raise AuthRequired("no Mastodon session for this account; run `unpost login mastodon`")
+            raise AuthRequired("no Mastodon session for this account; run `sociyx login mastodon`")
         self._sessions[account_id] = s
         return s
 
@@ -191,7 +191,7 @@ class MastodonAdapter(Adapter):
         resp = self._call("GET", account_id, "/api/v1/accounts/verify_credentials", s.access_token)
         body = client.json_body(resp) if resp.status_code == 200 else {}
         if not body.get("id"):
-            raise AuthRequired("session is not valid; run `unpost login mastodon`")
+            raise AuthRequired("session is not valid; run `sociyx login mastodon`")
         if f"{s.instance}:{body['id']}" != account_id:
             raise AuthRequired("stored session does not belong to this account; log in again")
         return Account(self.platform, account_id, f"@{body.get('username', s.username)}@{s.instance}")

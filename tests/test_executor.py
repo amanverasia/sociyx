@@ -5,11 +5,11 @@ from datetime import datetime, timezone
 
 import pytest
 
-from unpost import paths
-from unpost.executor import Executor, PlanRefused, cancel_job, pause_job
-from unpost.filters import Filter
-from unpost.planning import create_plan
-from unpost.scanning import scan_account
+from sociyx import paths
+from sociyx.executor import Executor, PlanRefused, cancel_job, pause_job
+from sociyx.filters import Filter
+from sociyx.planning import create_plan
+from sociyx.scanning import scan_account
 from conftest import make_executor, prepare
 
 POSTS = Filter(content_types=["post"])  # 20 alice posts
@@ -315,7 +315,7 @@ def test_rate_limit_wait_is_chunked_and_totals_requested(prep, store, sleeper):
     first = _order(p, store)[0]
     ex = make_executor(p, sleeper)
     # emulate a long Retry-After by patching the adapter's raised exception
-    from unpost.models import RateLimited
+    from sociyx.models import RateLimited
     orig = p.adapter.delete
     state = {"n": 0}
 
@@ -333,7 +333,7 @@ def test_rate_limit_wait_is_chunked_and_totals_requested(prep, store, sleeper):
 
 def _long_rl_setup(prep, store, interrupt):
     """First item raises RateLimited(300); `interrupt(ex, calls)` runs inside each fake sleep."""
-    from unpost.models import RateLimited
+    from sociyx.models import RateLimited
     p = prep(POSTS)
     order = _order(p, store)
     orig = p.adapter.delete
@@ -461,7 +461,7 @@ def test_interrupted_backoff_then_gone_on_resume_is_verified(prep, store):
 def test_error_details_are_scrubbed(prep, store, sleeper):
     p = prep(POSTS)
     first = _order(p, store)[0]
-    from unpost.models import PermanentError
+    from sociyx.models import PermanentError
     orig = p.adapter.delete
 
     def delete(item):
@@ -481,9 +481,9 @@ def test_error_details_are_scrubbed(prep, store, sleeper):
 import random
 from datetime import timedelta
 
-from unpost.adapters.fixture import FixtureAdapter
-from unpost.models import ActionBlocked, RateLimited, to_iso
-from unpost.store import now_iso
+from sociyx.adapters.fixture import FixtureAdapter
+from sociyx.models import ActionBlocked, RateLimited, to_iso
+from sociyx.store import now_iso
 
 
 class Slow(FixtureAdapter):

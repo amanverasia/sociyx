@@ -4,19 +4,19 @@ from types import SimpleNamespace
 
 import pytest
 
-from unpost import paths
-from unpost.adapters.fixture import FixtureAdapter
-from unpost.executor import Executor
-from unpost.filters import Filter
-from unpost.planning import create_plan
-from unpost.scanning import scan_account
-from unpost.store import Store
+from sociyx import paths
+from sociyx.adapters.fixture import FixtureAdapter
+from sociyx.executor import Executor
+from sociyx.filters import Filter
+from sociyx.planning import create_plan
+from sociyx.scanning import scan_account
+from sociyx.store import Store
 
 
 @pytest.fixture(autouse=True)
 def home(tmp_path, monkeypatch):
-    monkeypatch.setenv("UNPOST_HOME", str(tmp_path / "home"))
-    monkeypatch.delenv("UNPOST_FIXTURE_FAULTS", raising=False)
+    monkeypatch.setenv("SOCIYX_HOME", str(tmp_path / "home"))
+    monkeypatch.delenv("SOCIYX_FIXTURE_FAULTS", raising=False)
     return tmp_path / "home"
 
 

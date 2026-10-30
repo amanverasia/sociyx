@@ -185,7 +185,7 @@ class RunScreen(Screen):
                 self.action_pause()
 
         self.app.push_screen(ConfirmDialog(
-            "Pause the job first?", "A deletion job is running. unpost will pause it after the current item "
+            "Pause the job first?", "A deletion job is running. sociyx will pause it after the current item "
             "(nothing is cut off mid-request) and then quit. Resume any time from Home.",
             yes="Pause and quit", no="Keep running"), answered)
         return True

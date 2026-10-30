@@ -1,6 +1,6 @@
 # Architecture
 
-unpost is a single Python package (`src/unpost`) with a thin CLI, shared platform-neutral logic, and
+sociyx is a single Python package (`src/sociyx`) with a thin CLI, shared platform-neutral logic, and
 per-platform adapters that do network I/O only.
 
 ## Module map
@@ -15,17 +15,17 @@ per-platform adapters that do network I/O only.
 | `planning.py` | `create_plan`, `create_plan_from_items` (freeze an exact hand-picked list; `create_plan` is a filter in front of it), `plan_digest`, `check_plan_ready`, `preview`, `describe_pacing`. |
 | `executor.py` | `Executor.run`, `pause_job`, `cancel_job`, `job_is_running`: the safety-critical deletion loop. Optional `on_wait(seconds, reason)` and `on_state(text)` callbacks exist for UIs; they never influence behaviour. |
 | `report.py` | `build_report`, text/json/csv rendering. |
-| `cli.py` | argparse commands; exit codes; wires everything together. Bare `unpost` on a TTY (or `unpost tui [--demo]`) lazily imports and launches the TUI; without a TTY it prints help. |
+| `cli.py` | argparse commands; exit codes; wires everything together. Bare `sociyx` on a TTY (or `sociyx tui [--demo]`) lazily imports and launches the TUI; without a TTY it prints help. |
 | `tui/` | Guided Textual UI (see "Guided TUI" below). Presentation only: all logic that is not UI lives in the modules above. |
 | `redact.py` | `scrub()` and a logging filter that removes credentials from logs and errors. |
 | `paths.py` | Data directory layout, `private_dir` (0700), `secrets_dir(platform)`, `write_private` (0600, atomic). |
 | `loopback.py` | Shared login helpers: single-use `CallbackServer` on 127.0.0.1 (`/callback`, optional preferred port, then ephemeral) and `open_visible_browser` (visible Playwright Chromium, optional persistent profile; falls back to the system browser). Used by both OAuth adapters. |
 | `adapters/base.py` | The `Adapter` ABC and `ScanPage`. |
 | `adapters/__init__.py` | Registry `ADAPTERS` (lazy import by `"module:Class"`), `get_adapter`, `adapter_class`. |
-| `adapters/fixture.py` | Synthetic adapter with injectable faults (`UNPOST_FIXTURE_FAULTS`) for demos and tests. |
+| `adapters/fixture.py` | Synthetic adapter with injectable faults (`SOCIYX_FIXTURE_FAULTS`) for demos and tests. |
 | `adapters/bluesky/` | `adapter.py` (scan/delete/verify), `client.py` (XRPC, OAuth DPoP and password auth, error mapping), `oauth.py` (PAR + PKCE + DPoP, token exchange/refresh), `dpop.py`, `identity.py` (handle/DID/PDS resolution), `session.py`, `_http.py`. |
 | `adapters/mastodon/` | `adapter.py`, `client.py` (REST, Link pagination, rate-limit mapping, HTML to text), `oauth.py` (app registration, PKCE S256, loopback and OOB), `session.py`, `mapping.py` (status JSON to `ContentItem`). |
-| `adapters/instagram/` | `adapter.py` (scan/delete/verify, all 8 content types), `errors.py` (instagrapi → unpost mapping), `mapping.py` (objects/raw dicts → `ContentItem`), `session.py` (0600 settings), `browser.py` (visible login, cookie polling), `export_import.py` (offline Download-your-information parsing). |
+| `adapters/instagram/` | `adapter.py` (scan/delete/verify, all 8 content types), `errors.py` (instagrapi → sociyx mapping), `mapping.py` (objects/raw dicts → `ContentItem`), `session.py` (0600 settings), `browser.py` (visible login, cookie polling), `export_import.py` (offline Download-your-information parsing). |
 
 ## Store schema
 
@@ -155,16 +155,16 @@ Ctrl+C: the first sets a flag (finish current item, then pause); the second rais
 
 ## Guided TUI
 
-`src/unpost/tui/` (Textual, imported lazily by `cli.py`):
+`src/sociyx/tui/` (Textual, imported lazily by `cli.py`):
 
 | Path | Responsibility |
 |---|---|
 | `__init__.py` | `run_tui(demo)`: silences stderr logging (it would corrupt the screen) and runs the app. |
-| `app.py` | `UnpostApp`: the UI-thread `Store`, adapter factory, `run_interactive`/`login_flow` (login with the real terminal), quit interception, test seams (`adapter_factory`, `executor_options`, `scan_options`, `progress_hook`). |
+| `app.py` | `SociyxApp`: the UI-thread `Store`, adapter factory, `run_interactive`/`login_flow` (login with the real terminal), quit interception, test seams (`adapter_factory`, `executor_options`, `scan_options`, `progress_hook`). |
 | `model.py` | `BrowseModel`: pure filtering, conversation grouping (generic: any item whose `raw` has `thread_id`/`thread_title`) and the selection set. No Textual imports. |
 | `dialogs.py` | Confirm, info, date-range and platform-picker modals. |
 | `styles.py` | Shared Textual CSS. |
-| `demo.py` | `prepare_demo_home`: scratch `UNPOST_HOME` seeded with `DemoFixtureAdapter` accounts (fixture plus fake DMs). |
+| `demo.py` | `prepare_demo_home`: scratch `SOCIYX_HOME` seeded with `DemoFixtureAdapter` accounts (fixture plus fake DMs). |
 | `screens/help.py` | Key-help modal (`?`). |
 | `screens/home.py`, `resume.py` | Accounts; unfinished jobs and the resume confirmation. |
 | `screens/account.py`, `scan.py` | Per-type dashboard with background session re-verification; scan options, live progress, Stop. |

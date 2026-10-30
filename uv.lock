@@ -992,6 +992,40 @@ wheels = [
 ]
 
 [[package]]
+name = "sociyx"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "cryptography" },
+    { name = "httpx" },
+    { name = "playwright" },
+    { name = "textual" },
+]
+
+[package.optional-dependencies]
+instagram = [
+    { name = "instagrapi" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "cryptography", specifier = ">=43" },
+    { name = "httpx", specifier = ">=0.27" },
+    { name = "instagrapi", marker = "extra == 'instagram'", specifier = ">=3.2.2" },
+    { name = "playwright", specifier = ">=1.48" },
+    { name = "textual", specifier = ">=8.2.8" },
+]
+provides-extras = ["instagram"]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=8" }]
+
+[[package]]
 name = "textual"
 version = "8.2.8"
 source = { registry = "https://pypi.org/simple" }
@@ -1028,40 +1062,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/a3/26/b09b8010994eccc3c
 wheels = [
     { url = "https://files.pythonhosted.org/packages/67/81/4add07e5172b7ac40d8ed5ff580409a7801a4fe26d529bdd915401dabfbe/typing_inspection-0.4.4-py3-none-any.whl", hash = "sha256:65b8397ba37ccbce054456aaccddfc91e6e3083c92824df348d96ca832f3f147", size = 14750, upload-time = "2026-08-12T12:37:24.648Z" },
 ]
-
-[[package]]
-name = "unpost"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "cryptography" },
-    { name = "httpx" },
-    { name = "playwright" },
-    { name = "textual" },
-]
-
-[package.optional-dependencies]
-instagram = [
-    { name = "instagrapi" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pytest" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "cryptography", specifier = ">=43" },
-    { name = "httpx", specifier = ">=0.27" },
-    { name = "instagrapi", marker = "extra == 'instagram'", specifier = ">=3.2.2" },
-    { name = "playwright", specifier = ">=1.48" },
-    { name = "textual", specifier = ">=8.2.8" },
-]
-provides-extras = ["instagram"]
-
-[package.metadata.requires-dev]
-dev = [{ name = "pytest", specifier = ">=8" }]
 
 [[package]]
 name = "urllib3"
