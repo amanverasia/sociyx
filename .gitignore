@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+dist/
+build/
+*.egg-info/
+
+# Local user data: sessions, browser profiles, databases, exports.
+# These are credentials or personal content and must never be committed.
+.unpost/
+*.sqlite
+*.sqlite3
+*.db
+exports/
+browser-profile*/
+session*.json
+
+# Third-party binaries kept locally for reference only (proprietary; do not commit)
+*.AppImage
+*.crdownload
