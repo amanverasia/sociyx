@@ -12,7 +12,7 @@ them.** Ideas only, as noted.
 
 ## Redact.dev
 
-Redact.dev is proprietary. The user supplied the Redact desktop AppImage. A static look at the bundled
+Redact.dev is proprietary. We were given a copy of the Redact desktop AppImage. A static look at the bundled
 terms found a clause prohibiting reverse engineering and analysis, and the AppImage is only a bootstrap
 that downloads its platform modules at runtime. We therefore stopped, analyzed none of Redact's code,
 and use **no Redact code, branding or assets**. sociyx is inspired by the general idea of bulk-cleaning

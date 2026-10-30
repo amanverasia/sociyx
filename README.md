@@ -14,15 +14,14 @@ Everything is also available as plain commands (below), which are what scripts a
 step-by-step instructions use. Nothing is deleted just by logging in, scanning, or planning.
 
 The usual flow is **log in → scan → list/filter → create a plan → review → delete → report**.
-Run commands from this project folder. Use `uv run sociyx`, including the `uv run` prefix,
+Run commands from the project folder. Use `uv run sociyx`, including the `uv run` prefix,
 so the project dependencies are available.
 
-### Set up this copy
-
-You already have the project, so you do not need to clone it again:
+### Set up
 
 ```bash
-cd "/home/amanverasia/Projects/personal_projects/misc/redact.dev - rev"
+git clone https://github.com/amanverasia/sociyx.git
+cd sociyx
 uv sync --extra instagram
 uv run playwright install chromium
 uv run sociyx --help
