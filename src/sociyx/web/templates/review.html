@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Review{% endblock %}
+{% block banner %}{% if acct.platform == 'fixture' %}<p class="banner" role="note">{{ FIXTURE_BANNER }}</p>{% endif %}{% endblock %}
+{% block content %}
+<h1>Unsend or delete {{ headline }}</h1>
+<p>From {{ acct.handle or acct.account_id }} ({{ acct.platform }}). {{ per_type|join(", ") }}. Dates: {{ span }}{% if undated %} (+{{ undated }} undated){% endif %}.</p>
+<p class="hint">{{ pacing }}</p>
+<div class="danger" role="note">{% for w in warnings %}<p>{{ w }}</p>{% endfor %}</div>
+
+<form method="post" action="{{ base }}/review/start" class="confirm" autocomplete="off">
+  <input type="hidden" name="csrf_token" value="{{ csrf }}">
+  <input type="hidden" name="digest" value="{{ digest }}">
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  <p>Nothing has been deleted yet. To start, type exactly <code>{{ phrase }}</code> and press Enter.</p>
+  <label>Confirmation phrase <input type="text" name="phrase" placeholder="{{ phrase }}" required autocomplete="off" autofocus spellcheck="false"></label>
+  <div class="row">
+    <button type="submit" class="danger-btn">Start deleting</button>
+    <button type="submit" formaction="{{ base }}/review/save" formnovalidate>Save plan without deleting</button>
+    <a class="button" href="{{ base }}/browse">Back to selection</a>
+  </div>
+</form>
+
+<h2>Exactly these {{ items|length }} items</h2>
+<div class="tablewrap">
+<table class="items">
+  <caption class="sr-only">Items that will be deleted</caption>
+  <thead><tr><th scope="col">#</th><th scope="col">Date (UTC)</th><th scope="col">Type</th><th scope="col">Item id</th><th scope="col">Text</th></tr></thead>
+  <tbody>
+  {% for i in items %}<tr><td>{{ i.n }}</td><td>{{ i.date }}</td><td>{{ i.type }}</td><td>{{ i.id }}</td><td>{{ i.text }}</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

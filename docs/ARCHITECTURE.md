@@ -1,7 +1,19 @@
 # Architecture
 
 sociyx is a single Python package (`src/sociyx`) with a thin CLI, shared platform-neutral logic, and
-per-platform adapters that do network I/O only.
+per-platform adapters that do network I/O only. Three front ends sit over the same engine:
+
+```
+  CLI (cli.py)        TUI (tui/, Textual)        Web UI (web/, Starlette + htmx)
+        \                    |                          /
+         +-------- service.py (UI-neutral: BrowseModel, wording, import) --------+
+                              |
+   scanning.py  planning.py  executor.py  report.py  store.py  filters.py  redact.py
+                              |
+                     adapters/ (platform I/O only)
+```
+
+The engine (scanning, planning, executor, report) is never wrapped or re-implemented by a front end.
 
 ## Module map
 
@@ -15,8 +27,10 @@ per-platform adapters that do network I/O only.
 | `planning.py` | `create_plan`, `create_plan_from_items` (freeze an exact hand-picked list; `create_plan` is a filter in front of it), `plan_digest`, `check_plan_ready`, `preview`, `describe_pacing`. |
 | `executor.py` | `Executor.run`, `pause_job`, `cancel_job`, `job_is_running`: the safety-critical deletion loop. Optional `on_wait(seconds, reason)` and `on_state(text)` callbacks exist for UIs; they never influence behaviour. |
 | `report.py` | `build_report`, text/json/csv rendering. |
-| `cli.py` | argparse commands; exit codes; wires everything together. Bare `sociyx` on a TTY (or `sociyx tui [--demo]`) lazily imports and launches the TUI; without a TTY it prints help. |
-| `tui/` | Guided Textual UI (see "Guided TUI" below). Presentation only: all logic that is not UI lives in the modules above. |
+| `cli.py` | argparse commands; exit codes; wires everything together. Bare `sociyx` on a TTY (or `sociyx tui [--demo]`) lazily imports and launches the TUI; without a TTY it prints help. `sociyx ui` lazily imports and serves the web UI. |
+| `service.py` | UI-neutral logic shared by the TUI and the web UI: `BrowseModel` (filtering, conversation grouping, selection set), the per-type dashboard rows, session verification, scan/review/results wording (`TYPE_WARNINGS`, `status_message`, `confirmation_phrase`), `unfinished_jobs`, `selection_digest`, and `import_export` (also used by `sociyx import`). No Textual or Starlette imports. |
+| `tui/` | Guided Textual UI (see "Guided TUI" below). Presentation only: all logic that is not UI lives in the modules above. `tui/model.py` is a re-export shim of `service.py`. |
+| `web/` | Local web UI (see "Local web UI" below). Presentation and access control only; `sociyx ui [--demo] [--port N] [--no-open]` lazily imports it. |
 | `redact.py` | `scrub()` and a logging filter that removes credentials from logs and errors. |
 | `paths.py` | Data directory layout, `private_dir` (0700), `secrets_dir(platform)`, `write_private` (0600, atomic). |
 | `loopback.py` | Shared login helpers: single-use `CallbackServer` on 127.0.0.1 (`/callback`, optional preferred port, then ephemeral) and `open_visible_browser` (visible Playwright Chromium, optional persistent profile; falls back to the system browser). Used by both OAuth adapters. |
@@ -161,7 +175,7 @@ Ctrl+C: the first sets a flag (finish current item, then pause); the second rais
 |---|---|
 | `__init__.py` | `run_tui(demo)`: silences stderr logging (it would corrupt the screen) and runs the app. |
 | `app.py` | `SociyxApp`: the UI-thread `Store`, adapter factory, `run_interactive`/`login_flow` (login with the real terminal), quit interception, test seams (`adapter_factory`, `executor_options`, `scan_options`, `progress_hook`). |
-| `model.py` | `BrowseModel`: pure filtering, conversation grouping (generic: any item whose `raw` has `thread_id`/`thread_title`) and the selection set. No Textual imports. |
+| `model.py` | Compatibility shim re-exporting `BrowseModel` and friends, which now live in `sociyx/service.py` (pure filtering, conversation grouping keyed on `raw` `thread_id`/`thread_title`, the selection set). |
 | `dialogs.py` | Confirm, info, date-range and platform-picker modals. |
 | `styles.py` | Shared Textual CSS. |
 | `demo.py` | `prepare_demo_home`: scratch `SOCIYX_HOME` seeded with `DemoFixtureAdapter` accounts (fixture plus fake DMs). |
@@ -188,6 +202,74 @@ API refuses to run inside a thread that has one).
 
 The confirmation token stays mandatory in `Executor.run`; the TUI passes `plan.confirmation_token` itself only
 after the typed phrase (new run) or the resume dialog.
+
+## Local web UI
+
+`src/sociyx/web/` (Starlette, uvicorn, Jinja2; htmx vendored under `static/`, no build step, no CDN). Started by
+`sociyx ui`, which binds a socket on `127.0.0.1` (random free port by default) and hands it to uvicorn.
+
+| Path | Responsibility |
+|---|---|
+| `__init__.py` | `run_web(demo, port, open_browser)`: bind, build the app, print/open the one-time launch URL, run uvicorn with access logs off and no `Server` header. |
+| `security.py` | `SecurityMiddleware`, a pure ASGI middleware in front of every route (the access-control layer, see below). |
+| `state.py` | `WebState`: launch secret (single use), sessions (id, CSRF token, per-account `BrowseModel`s), job registries, adapter/store factories (mirrors `SociyxApp`, same test seams). |
+| `jobs.py` | `ScanJob`, `RunJob`, `LoginJob`: background threads. |
+| `app.py` | Routes and views (sync functions, run in Starlette's thread pool), `shutdown_jobs`. |
+| `templates/`, `static/` | Jinja2 templates (autoescaped, no inline script or style) and `style.css`, `app.js`, `htmx.min.js` (+ its 0BSD licence note). |
+
+Pages: Home, Add account (login), Account dashboard (session check, per-type counts, scan with Stop and a page
+limit), Browse (type tabs, search, date range, conversation grouping, pagination, selection that survives
+filter changes), Review, Run, Results, Resume, Import, Help.
+
+### Threading model
+
+Every request is handled by a sync function in the thread pool and opens its own short-lived `Store`
+(SQLite connections must not cross threads). Scans, deletion runs and logins are daemon threads that each open
+their own `Store` and their own adapter instance, exactly like the TUI workers, and publish progress through
+attributes guarded by a lock; pages poll small HTML fragments with htmx (`hx-trigger="every 1s"`; a finished
+job answers with an `HX-Redirect` or a fragment without a trigger, so polling stops). Pause and cancel go through
+`pause_job`/`cancel_job` on a request-local `Store` (the same `jobs.control` mechanism as the TUI). The
+`Executor`, its file locks, pacing, export-before-delete, account re-check and fingerprint checks are used
+unchanged. Selection state is server-side, keyed by session id, under a per-session lock. The ASGI lifespan
+shutdown (Ctrl+C) pauses every running job after its current item and stops scans between pages before the
+process exits; closing a browser tab does not stop a job.
+
+Logins run `adapter.login` in a plain thread on the server machine (visible browser or OAuth loopback). For the
+Instagram password method the adapter is built with `prompt_secret`/`prompt_text` callables that answer from the
+form (password first, then the optional 2FA code) and never read a terminal; the values live in the job's private
+dict only for the duration of the call and are cleared afterwards.
+
+### Security model
+
+The threat is any web page open in the user's browser and any other local user, not a remote attacker.
+`SecurityMiddleware` enforces, in this order, before routing:
+
+1. `Host` must be exactly `127.0.0.1:PORT` or `localhost:PORT` (DNS rebinding) else 400.
+2. Only GET, HEAD, POST exist (no OPTIONS, so no preflight and no CORS; `Access-Control-*` headers are never sent).
+3. `GET /?launch=SECRET` is the only unauthenticated request. The secret (`secrets.token_urlsafe(32)`) is compared in
+   constant time, is single use (invalidated at the first correct exchange), and mints a session id
+   (`token_urlsafe(32)`) in a cookie `HttpOnly; SameSite=Strict; Path=/`, then redirects to `/` so the secret does
+   not stay in the address bar.
+4. Everything else needs a valid session cookie, else 401 (static files included). Sessions expire after 12 hours.
+5. POST additionally needs `Origin` (or `Referer`) equal to `http://<Host>`, a urlencoded body, and the session's CSRF
+   token in `X-CSRF-Token` (added by `app.js` to every htmx request) or a `csrf_token` form field. State-changing
+   routes exist only as POST.
+
+Every response, refusals included, carries `Content-Security-Policy` (`default-src 'self'`, `script-src 'self'`,
+`style-src 'self'`, `frame-ancestors 'none'`, `form-action 'self'`, `base-uri 'none'`, no inline script or style),
+`X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, `X-Frame-Options: DENY` and
+`Cache-Control: no-store` (`no-cache` for `/static/`). htmx is configured with `allowEval: false` and without
+its inline indicator styles. Static files are served from a whitelist of file names read at startup; there is no
+path parameter anywhere. Export and report downloads resolve a plan id in the store (the export path must also be
+inside the exports folder). Uvicorn access logging is off, nothing logs the secret, cookie, CSRF token, password or
+confirmation token, and every user-visible error text goes through `redact.scrub`.
+
+Deletion safety is the TUI's, enforced on the server: a plan is created only when the review form is submitted, from
+the server-side selection (never from ids sent by the browser); the typed phrase `delete N` is compared with N
+recomputed from that selection; a digest of the selection in the form detects a selection that changed in another
+tab; `plan.confirmation_token` is read from the database inside the run thread and handed to `Executor.run`, and is
+never put in a template, response or cookie. Starting the run clears the selection, so a double submit cannot create
+a second plan.
 
 ## Design decisions and trade-offs
 

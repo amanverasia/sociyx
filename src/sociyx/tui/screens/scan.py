@@ -14,14 +14,9 @@ from textual.worker import Worker, WorkerState
 
 from ...models import Account, ActionBlocked, AuthRequired
 from ...redact import scrub
-from ...scanning import ScanSummary, scan_account
+from ...scanning import scan_account
+from ...service import summary_line  # noqa: F401
 from ..app import FIXTURE_BANNER
-
-
-def summary_line(s: ScanSummary) -> str:
-    state = "stopped (resumable)" if s.stopped else "partial (resumable)" if s.partial else s.status
-    line = f"{s.content_type}: {state}; pages={s.pages} seen={s.items_seen} new={s.new_items} missing={s.marked_missing}"
-    return line + (f"; error: {s.error}" if s.error else "") + (f"; warning: {s.warning}" if s.warning else "")
 
 
 class ScanScreen(Screen):

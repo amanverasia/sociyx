@@ -1,0 +1,85 @@
+<nav class="tabs" aria-label="Content types">
+  {% set base_q = {'q': filt.q, 'since': filt.since, 'until': filt.until} %}
+  <a href="{{ base }}/browse?{{ urlencode(base_q) }}" hx-get="{{ base }}/browse?{{ urlencode(base_q) }}" hx-target="#browse-body" hx-push-url="true" {% if not filt.type %}aria-current="page"{% endif %}>All</a>
+  {% for t in tabs %}
+  {% set tq = {'type': t, 'q': filt.q, 'since': filt.since, 'until': filt.until} %}
+  <a href="{{ base }}/browse?{{ urlencode(tq) }}" hx-get="{{ base }}/browse?{{ urlencode(tq) }}" hx-target="#browse-body" hx-push-url="true" {% if filt.type == t %}aria-current="page"{% endif %}>{{ t }}</a>
+  {% endfor %}
+</nav>
+
+<form id="filters" method="get" action="{{ base }}/browse" hx-get="{{ base }}/browse" hx-target="#browse-body" hx-push-url="true" hx-trigger="submit, input changed delay:300ms from:#f-q">
+  <input type="hidden" name="type" value="{{ filt.type }}">
+  <input type="hidden" name="group" value="{{ filt.group }}">
+  <div class="row">
+    <label>Search text (case-insensitive) <input id="f-q" type="search" name="q" value="{{ filt.q }}" autocomplete="off"></label>
+    <label>Since (YYYY-MM-DD, UTC) <input type="text" name="since" value="{{ filt.since }}" placeholder="2021-01-01" autocomplete="off"></label>
+    <label>Until (inclusive) <input type="text" name="until" value="{{ filt.until }}" placeholder="2021-12-31" autocomplete="off"></label>
+    <button type="submit">Apply filters</button>
+    <a class="button" href="{{ base }}/browse" hx-get="{{ base }}/browse" hx-target="#browse-body" hx-push-url="true">Clear filters</a>
+  </div>
+</form>
+
+{% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+{% if notice %}<p class="ok" role="status">{{ notice }}</p>{% endif %}
+
+<div class="bulk" role="group" aria-label="Selection actions">
+  <button type="button" hx-post="{{ base }}/select/visible" hx-include="#filters" hx-target="#browse-body">Select all {{ total }} filtered</button>
+  <button type="button" hx-post="{{ base }}/select/none" hx-include="#filters" hx-target="#browse-body">Deselect all filtered</button>
+  <button type="button" hx-post="{{ base }}/select/invert" hx-include="#filters" hx-target="#browse-body">Invert filtered</button>
+  <button type="button" hx-post="{{ base }}/select/clear" hx-include="#filters" hx-target="#browse-body">Clear whole selection</button>
+</div>
+
+{% include "_selstatus.html" %}
+
+<div class="split">
+  {% if groups %}
+  <aside aria-label="Conversations">
+    <h2>Conversations</h2>
+    <ul class="groups">
+      {% set gq = {'type': filt.type, 'q': filt.q, 'since': filt.since, 'until': filt.until} %}
+      <li><a href="{{ base }}/browse?{{ urlencode(gq) }}" hx-get="{{ base }}/browse?{{ urlencode(gq) }}" hx-target="#browse-body" hx-push-url="true" {% if not filt.group %}aria-current="page"{% endif %}>All conversations</a></li>
+      {% for g in groups %}
+      {% set gq2 = {'type': filt.type, 'q': filt.q, 'since': filt.since, 'until': filt.until, 'group': g.key} %}
+      <li>
+        <a href="{{ base }}/browse?{{ urlencode(gq2) }}" hx-get="{{ base }}/browse?{{ urlencode(gq2) }}" hx-target="#browse-body" hx-push-url="true" {% if filt.group == g.key %}aria-current="page"{% endif %}>{{ g.title }} ({{ g.count }})</a>
+        <button type="button" class="small" hx-post="{{ base }}/select/group" hx-include="#filters" hx-vals='{{ {"select_group": g.key}|tojson }}' hx-target="#browse-body" aria-label="Select whole conversation {{ g.title }}">Select whole conversation</button>
+      </li>
+      {% endfor %}
+    </ul>
+  </aside>
+  {% endif %}
+  <div class="tablewrap">
+    {% if rows %}
+    <table class="items">
+      <caption class="sr-only">Stored items, newest first</caption>
+      <thead><tr><th scope="col">Select</th><th scope="col">Date (UTC)</th><th scope="col">Type</th><th scope="col">Text</th></tr></thead>
+      <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>{% if r.selectable %}
+          <input type="checkbox" name="on" value="1" {% if r.selected %}checked{% endif %}
+                 hx-post="{{ base }}/select/toggle" hx-vals='{{ {"item_id": r.id}|tojson }}' hx-trigger="change" hx-target="#selstatus" hx-swap="outerHTML"
+                 aria-label="Select {{ r.type }} from {{ r.date }}">
+          {% else %}<span title="This type cannot be deleted on this platform">-</span>{% endif %}</td>
+        <td>{{ r.date }}</td><td>{{ r.type }}</td>
+        <td><details><summary>{{ r.text or "(no text)" }}</summary>
+          <dl><dt>Item id</dt><dd>{{ r.id }}</dd>
+          {% if r.convo %}<dt>Conversation</dt><dd>{{ r.convo }}</dd>{% endif %}
+          <dt>URL</dt><dd>{{ r.url or "-" }}</dd><dt>Text</dt><dd class="pre">{{ r.full or "(no text)" }}</dd></dl></details></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>No stored items match. {% if all_total == 0 %}Nothing has been scanned yet: <a href="{{ base }}">scan this account first</a>.{% endif %}</p>
+    {% endif %}
+    {% if pages > 1 %}
+    <nav class="pager" aria-label="Pages">
+      {% set pq = {'type': filt.type, 'q': filt.q, 'since': filt.since, 'until': filt.until, 'group': filt.group} %}
+      {% if page > 1 %}{% set _ = pq.update({'page': page - 1}) %}<a href="{{ base }}/browse?{{ urlencode(pq) }}" hx-get="{{ base }}/browse?{{ urlencode(pq) }}" hx-target="#browse-body" hx-push-url="true" rel="prev">Previous</a>{% endif %}
+      <span>Page {{ page }} of {{ pages }} ({{ page_size }} per page)</span>
+      {% if page < pages %}{% set _ = pq.update({'page': page + 1}) %}<a href="{{ base }}/browse?{{ urlencode(pq) }}" hx-get="{{ base }}/browse?{{ urlencode(pq) }}" hx-target="#browse-body" hx-push-url="true" rel="next">Next</a>{% endif %}
+    </nav>
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Resume{% endblock %}
+{% block content %}
+<h1>Resume this deletion job?</h1>
+<p>Plan {{ plan.plan_id }}: {{ plan.item_count }} items from {{ acct.handle if acct else plan.account_id }} ({{ plan.platform }}).</p>
+<p>So far: {{ counts }}. Remaining to delete: {{ remaining }}.
+{% if job %}<br>Last status: {{ job["status"] }}{% if job["error"] %} - {{ job["error"] }}{% endif %}{% endif %}</p>
+{% if resumable %}
+<form method="post" action="/resume/{{ plan.plan_id }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf }}">
+  <button type="submit" class="danger-btn">Resume deleting</button>
+  <a class="button" href="/" autofocus>Not now</a>
+</form>
+{% else %}
+<p class="hint">This job is finished or was cancelled, so it cannot be resumed. <a href="/results/{{ plan.plan_id }}">See results</a>.</p>
+{% endif %}
+{% endblock %}

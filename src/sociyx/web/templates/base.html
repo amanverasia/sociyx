@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="csrf-token" content="{{ csrf }}">
+<meta name="htmx-config" content='{"allowEval":false,"includeIndicatorStyles":false,"historyCacheSize":0,"responseHandling":[{"code":"204","swap":false},{"code":"[23]..","swap":true},{"code":"[45]..","swap":true,"error":true},{"code":"...","swap":false}]}'>
+<title>{% block title %}Home{% endblock %} - sociyx</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/htmx.min.js" defer></script>
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <a class="brand" href="/">sociyx</a>
+  <nav aria-label="Main">
+    <a href="/">Home</a>
+    <a href="/login">Add account</a>
+    <a href="/import">Import</a>
+    <a href="/help">Help and limits</a>
+  </nav>
+</header>
+{% if demo %}<p class="banner" role="note">DEMO MODE: fake accounts in a scratch folder. Real data is not used.</p>{% endif %}
+{% block banner %}{% endblock %}
+<main id="main" tabindex="-1">
+{% block content %}{% endblock %}
+</main>
+<footer class="foot">Local-first. This page is served only to this computer. Nothing is deleted until you type the confirmation phrase on a review page.</footer>
+</body>
+</html>

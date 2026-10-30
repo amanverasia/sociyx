@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Help and limits{% endblock %}
+{% block content %}
+<h1>Help and limits</h1>
+<h2>What this can and cannot do</h2>
+<ul>
+  <li>sociyx removes content <strong>you</strong> posted, from accounts <strong>you</strong> log into. It works only through what each platform lets it list.</li>
+  <li><strong>It does not guarantee a complete wipe.</strong> Platforms may not expose all of your history, deletions may take time to appear, and copies can exist elsewhere (caches, archives, other people's reposts or quotes, platform backups).</li>
+  <li>Deleting cannot be undone by this tool. Review the exact list, and start with a small selection.</li>
+  <li>Scanning is slow on purpose on some platforms, to look like normal use. A report covers only the items in its plan; it is not proof that nothing else remains.</li>
+  <li>Instagram uses an unofficial interface that conflicts with its Terms of Use and can trigger challenges or blocks. sociyx stops when that happens and never tries to get around a challenge or CAPTCHA.</li>
+</ul>
+<h2>How the steps fit together</h2>
+<ol>
+  <li><strong>Add account</strong>: log in (a browser window opens on this computer).</li>
+  <li><strong>Scan</strong>: read your history into the local database. Stop it any time; it resumes.</li>
+  <li><strong>Browse and select</strong>: filter by type, text and dates, tick items, or select a whole conversation.</li>
+  <li><strong>Review</strong>: the exact items, the pace, and a typed confirmation: <code>delete N</code>.</li>
+  <li><strong>Run</strong>: live progress; pause or cancel. Paused jobs can be resumed from Home.</li>
+  <li><strong>Results</strong>: what was verified, what was not, and what to do next.</li>
+</ol>
+<h2>Keyboard</h2>
+<ul>
+  <li><kbd>/</kbd> focuses the search box when browsing. <kbd>?</kbd> opens this page.</li>
+  <li>Everything is reachable with Tab, Shift+Tab, Space and Enter.</li>
+</ul>
+<h2>Per platform</h2>
+{% for p in platforms %}
+<section class="card" id="{{ p.name }}">
+  <h3>{{ p.label }}</h3>
+  <p class="pre">{{ p.notes }}</p>
+  {% if p.pacing %}<p class="hint">Pacing, for example 100 items: {{ p.pacing }}</p>{% endif %}
+</section>
+{% endfor %}
+{% endblock %}

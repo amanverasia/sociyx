@@ -8,32 +8,9 @@ from textual.containers import Horizontal
 from textual.screen import Screen
 from textual.widgets import Button, DataTable, Footer, Static
 
-from ...executor import job_is_running
 from ...models import Outcome
-from ...store import Store
+from ...service import RESUMABLE, counts_text, unfinished_jobs  # noqa: F401
 from ..dialogs import ConfirmDialog
-
-RESUMABLE = ("paused", "stopped_auth", "stopped_blocked", "running")
-
-
-def unfinished_jobs(store: Store) -> list[dict]:
-    """Jobs that can be resumed; a DB status of 'running' only counts if no process holds its lock."""
-    out = []
-    for j in store.list_jobs():
-        if j["status"] not in RESUMABLE or (j["status"] == "running" and job_is_running(j["job_id"])):
-            continue
-        plan = store.get_plan(j["plan_id"])
-        acct = store.get_account(plan.platform, plan.account_id)
-        counts = store.outcome_counts(plan.plan_id)
-        remaining = counts.get(Outcome.PENDING.value, 0) + counts.get(Outcome.IN_PROGRESS.value, 0)
-        out.append({"job": j, "plan": plan, "handle": acct.handle if acct else plan.account_id,
-                    "counts": counts, "remaining": remaining})
-    return out
-
-
-def counts_text(counts: dict[str, int]) -> str:
-    return ", ".join(f"{n} {k.replace('_', ' ')}" for k, n in sorted(counts.items()) if n) or "nothing yet"
-
 
 def confirm_resume(screen: Screen, plan_id: int) -> None:
     """Ask for a lighter confirmation (the plan was already confirmed when created), then re-enter Run."""

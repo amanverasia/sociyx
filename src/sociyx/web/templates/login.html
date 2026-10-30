@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Add account{% endblock %}
+{% block content %}
+<h1>Add account</h1>
+<p class="hint">Logging in only lets sociyx read and manage your own content. Browser logins open a normal browser window <strong>on this computer</strong>; you type your credentials there, not here. sociyx never bypasses a CAPTCHA or a login challenge.</p>
+{% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+{% for p in platforms %}
+{% if not only or only == p %}
+<section class="card" aria-labelledby="h-{{ p }}">
+  <h2 id="h-{{ p }}">{{ p|capitalize }}</h2>
+  <form method="post" action="/login/start">
+    <input type="hidden" name="csrf_token" value="{{ csrf }}">
+    <input type="hidden" name="platform" value="{{ p }}">
+    {% if methods[p]|length > 1 %}
+    <fieldset>
+      <legend>How do you want to log in?</legend>
+      {% for m, label, pref in methods[p] %}
+      <label class="radio"><input type="radio" name="method" value="{{ m }}" {% if loop.first %}checked{% endif %}> {{ label }}{% if pref %} <span class="tag">preferred</span>{% endif %}</label>
+      {% endfor %}
+    </fieldset>
+    {% else %}
+    <input type="hidden" name="method" value="{{ methods[p][0][0] or '' }}">
+    <p>{{ methods[p][0][1] }}</p>
+    {% endif %}
+    <label>{{ hints[p] }}
+      <input type="text" name="hint" value="{{ prefill if only == p else '' }}" autocomplete="off" maxlength="200" {% if p in ('bluesky','mastodon') %}required{% endif %}>
+    </label>
+    {% if p == 'instagram' %}
+    <details>
+      <summary>Password method (only if the browser session is rejected)</summary>
+      <p class="hint">The password is sent to this local server over your own computer's loopback connection, used for the one login call and then discarded. It is never saved or logged. Instagram may ask for a verification code or a challenge: finish challenges in the official app or site.</p>
+      <label>Password
+        <input type="password" name="password" autocomplete="off">
+      </label>
+      <label>2FA code (only if you use two-factor authentication)
+        <input type="text" name="code" inputmode="numeric" autocomplete="off" maxlength="12">
+      </label>
+    </details>
+    {% endif %}
+    <button type="submit" class="primary">Log in to {{ p|capitalize }}</button>
+  </form>
+</section>
+{% endif %}
+{% endfor %}
+{% endblock %}

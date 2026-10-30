@@ -1,0 +1,9 @@
+{% if snap.running %}
+<p>Waiting for the login to finish. If a browser window opened on this computer, complete the login there. This page updates by itself.</p>
+{% elif snap.ok %}
+<p class="ok" role="status">{{ snap.message }}</p>
+<p><a class="button primary" href="{{ account_url }}">Open the account</a> <a href="/">Home</a></p>
+{% else %}
+<p class="error" role="alert">{{ snap.message }}</p>
+<p><a class="button" href="/login">Try again</a> <a href="/">Home</a></p>
+{% endif %}

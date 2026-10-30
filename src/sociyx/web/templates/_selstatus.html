@@ -1,0 +1,6 @@
+<div id="selstatus" class="status" role="status" aria-live="polite">
+  <strong>{{ nsel }} selected</strong> / {{ total }} shown / {{ all_total }} total
+  {% if hidden_sel %}<span class="warn">({{ hidden_sel }} selected but hidden by filters)</span>{% endif %}
+  {% if nsel %}<a class="button success" href="{{ base }}/review">Review {{ nsel }} selected</a>
+  {% else %}<span class="button disabled" aria-disabled="true">Review (select something first)</span>{% endif %}
+</div>

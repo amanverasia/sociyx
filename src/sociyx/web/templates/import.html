@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Import a data export{% endblock %}
+{% block content %}
+<h1>Import an Instagram data export</h1>
+<p>Comments you wrote on other people's posts, and older likes, cannot be listed through Instagram's API. Request your data from Instagram (Settings, Accounts Center, Your information and permissions, Download your information, format <strong>JSON</strong>), unzip it, then give the folder path below. Importing only adds records to the local database on this computer; it contacts nobody and deletes nothing. Afterwards, browse the <code>comment_export</code> type and use the normal review step.</p>
+{% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+{% if result %}
+  {% if result.found %}<p class="ok" role="status">Imported {{ result.seen }} items ({{ result.new }} new).</p>
+  {% else %}<p class="warn" role="status">Nothing importable was found in that folder.</p>{% endif %}
+{% endif %}
+<form method="post" action="/import">
+  <input type="hidden" name="csrf_token" value="{{ csrf }}">
+  <label>Path of the unzipped export folder (on this computer)
+    <input type="text" name="path" value="{{ path }}" required autocomplete="off" placeholder="/home/you/Downloads/instagram-export">
+  </label>
+  <label>Instagram account
+    <select name="account">
+      <option value="">The only logged-in Instagram account</option>
+      {% for a in accounts %}<option value="{{ a['account_id'] }}">{{ a['handle'] or a['account_id'] }} ({{ a['account_id'] }})</option>{% endfor %}
+    </select>
+  </label>
+  <button type="submit" class="primary">Import</button>
+</form>
+{% endblock %}

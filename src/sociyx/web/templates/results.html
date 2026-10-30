@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Results for plan {{ plan_id }}{% endblock %}
+{% block banner %}{% if rep.platform == 'fixture' %}<p class="banner" role="note">{{ FIXTURE_BANNER }}</p>{% endif %}{% endblock %}
+{% block content %}
+<h1>Results for plan {{ plan_id }}: {{ rep.handle }} <small>({{ rep.platform }})</small></h1>
+<p class="status">Job status: {{ rep.job["status"] if rep.job else "not started" }}</p>
+<p class="{{ css }}">{{ msg }}</p>
+{% if running %}<p class="warn">This job is still running. <a href="/run/{{ plan_id }}">Watch progress</a>.</p>{% endif %}
+<h2>Summary</h2>
+<ul class="plain">{% for s in sections %}<li><strong>{{ s.n }}</strong> {{ s.title }}</li>{% endfor %}</ul>
+{% for s in sections %}{% if s.n %}
+<details>
+  <summary>{{ s.title }} ({{ s.n }})</summary>
+  <ul class="plain">
+  {% for it in s.rows %}<li>{{ it.item_id }} [{{ it.content_type }}]{% if it.detail %} - {{ it.detail }}{% endif %}</li>{% endfor %}
+  {% if s.more %}<li>... and {{ s.more }} more (download the report to see all)</li>{% endif %}
+  </ul>
+</details>
+{% endif %}{% endfor %}
+{% if resumable %}<p><a class="button" href="/resume/{{ plan_id }}">Resume...</a></p>{% endif %}
+<h2>Platform history notes</h2>
+<p class="pre">{{ rep.discovery_notes }}</p>
+<p id="disclaimer" class="status">{{ rep.disclaimer }}</p>
+<p>
+  Download: <a href="/plan/{{ plan_id }}/report/text">report (text)</a>, <a href="/plan/{{ plan_id }}/report/json">json</a>, <a href="/plan/{{ plan_id }}/report/csv">csv</a>,
+  <a href="/plan/{{ plan_id }}/export">export of the planned items</a>.
+</p>
+<p><a class="button primary" href="/">Home</a></p>
+{% endblock %}

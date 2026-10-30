@@ -8,7 +8,7 @@ verification and a report.
 
 ## Start here: how do I use it?
 
-**This is a terminal app.** Run `uv run sociyx` with no arguments in a terminal for the
+**This is a terminal app, with an optional local [web UI](#web-ui) (`uv run sociyx ui`).** Run `uv run sociyx` with no arguments in a terminal for the
 [guided UI](#guided-tui) that walks you through login, scan, selecting items, review and deletion.
 Everything is also available as plain commands (below), which are what scripts and the
 step-by-step instructions use. Nothing is deleted just by logging in, scanning, or planning.
@@ -192,6 +192,34 @@ Known limits:
   the adapter) has not been tested against a real account. Use `sociyx login` in a normal terminal
   if it misbehaves.
 
+## Web UI
+
+```bash
+uv run sociyx ui                 # opens your browser on a random local port
+uv run sociyx ui --demo          # fake accounts and data in a throw-away folder; real data untouched
+uv run sociyx ui --port 8765 --no-open   # fixed port; prints the one-time link instead of opening a browser
+```
+
+The same flow as the TUI in a browser: **Home** (accounts, add account, resume jobs) -> **Account** (what is
+stored per type, session check, scan with Stop and a page limit) -> **Browse** (type tabs, search, date range,
+pagination, per-row checkboxes, select all filtered, deselect, invert, clear, whole Instagram conversations;
+your selection survives filter changes) -> **Review** (the exact items, pacing in plain words, type
+`delete N`) -> **Run** (live counts, countdown to the next action, pause, cancel with confirmation) ->
+**Results** (same sections and disclaimer as `sociyx report`, downloadable report and export). There is also an
+**Import** page for an unzipped Instagram data export and a **Help and limits** page. It never claims a complete
+wipe.
+
+It is a local app, not a website: the server listens on `127.0.0.1` only, and the browser link printed by
+`sociyx ui` works exactly once. Logins (a visible browser window, or the Instagram password form, with the
+browser session listed first as preferred) run on the machine running sociyx. Stop it with Ctrl+C in the terminal:
+running deletions are paused after their current item and can be resumed from Home. Everything needs JavaScript
+(htmx is bundled; nothing is loaded from the internet).
+
+**Not verified against real platforms.** The web UI has only been exercised with the fixture adapters (automated
+tests, plus a real-HTTP smoke test of the demo server). Real Instagram, Bluesky and Mastodon logins and deletions
+through the web UI are untested, like the TUI's. Real browsers were not driven either. See
+[SECURITY.md](SECURITY.md#local-web-ui-threat-model) for what the localhost server does and does not defend against.
+
 ## What it is and is not
 
 - It runs on your machine. Your data, sessions and exports stay in a private local directory.
@@ -204,7 +232,7 @@ Known limits:
   CAPTCHAs/MFA. It stops when a platform challenges it.
 - It cannot delete copies it does not control: other people's quotes and screenshots, caches, search
   engines, archives, federated copies. Reports say so.
-- Status: early (v0.1). The only real-account results so far are for Instagram (scan, list and DM
+- Status: early (0.0.1 alpha). The only real-account results so far are for Instagram (scan, list and DM
   unsend, reported by the account owner); everything else is untested against real accounts. See [docs/VERIFICATION.md](https://github.com/amanverasia/sociyx/blob/main/docs/VERIFICATION.md). Your first real run should be a
   plan of 1-3 items that you have reviewed.
 

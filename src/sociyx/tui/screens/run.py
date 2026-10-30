@@ -15,13 +15,9 @@ from textual.worker import Worker, WorkerState
 from ...executor import Executor, PlanRefused, cancel_job, pause_job
 from ...models import Outcome, format_duration
 from ...redact import scrub
+from ...service import LABELS
 from ..app import FIXTURE_BANNER
 from ..dialogs import ConfirmDialog
-
-LABELS = [("deleted_verified", "verified"), ("deleted_unverified", "unverified"), ("already_deleted", "already gone"),
-          ("inaccessible", "inaccessible"), ("failed", "failed"), ("skipped", "skipped"),
-          ("in_progress", "in flight"), ("pending", "pending")]
-
 
 class RunScreen(Screen):
     BINDINGS = [("p", "pause", "Pause")]

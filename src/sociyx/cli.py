@@ -363,44 +363,18 @@ def cmd_report(args, store) -> int:
 
 
 def cmd_import(args, store) -> int:
-    from pathlib import Path
-
-    from .models import Account as _Account
+    from .service import import_export
 
     _banner(args.platform)
     adapter = get_adapter(args.platform)
     try:
-        fn = getattr(adapter, "import_export", None)
-        if fn is None:
-            raise ValueError(f"platform {args.platform!r} does not support importing a data export")
-        path = Path(args.path)
-        if not path.exists():
-            raise ValueError(f"export path {args.path!r} does not exist")
-        if not path.is_dir():
-            raise ValueError("export path must be an unzipped export directory")
-        acct = None
-        if args.account:
-            known = store.get_account(args.platform, args.account)
-            acct = known or _Account(args.platform, args.account, "")
-        items = list(fn(path, acct) if acct is not None else fn(path))
-        if not items:
-            print("nothing importable found in the export")
-            return 0
-        by_acct: dict[str, list] = {}
-        for it in items:
-            by_acct.setdefault(it.account_id, []).append(it)
-        total_seen = total_new = 0
-        for aid, subset in sorted(by_acct.items()):
-            handle = subset[0].account_id
-            # Preserve a known handle when we already have this account.
-            known = store.get_account(args.platform, aid)
-            store.upsert_account(known or _Account(args.platform, aid, ""), verified=False)
-            seen, new = store.upsert_items(subset, None, source="export")
-            total_seen += seen
-            total_new += new
-        print(f"imported {total_seen} items ({total_new} new) from {args.path}")
+        res = import_export(store, adapter, args.platform, args.path, args.account)
     finally:
         adapter.close()
+    if not res.found:
+        print("nothing importable found in the export")
+        return 0
+    print(f"imported {res.seen} items ({res.new} new) from {args.path}")
     return 0
 
 
@@ -439,6 +413,11 @@ def build_parser() -> argparse.ArgumentParser:
     p = add("tui", cmd_tui, "open the guided terminal UI (same as running `sociyx` with no arguments)")
     p.add_argument("--demo", action="store_true",
                    help="try everything with fake data in a throw-away folder; your real data is not touched")
+    p = add("ui", cmd_ui, "open the local web UI in your browser (127.0.0.1 only)")
+    p.add_argument("--demo", action="store_true",
+                   help="try everything with fake data in a throw-away folder; your real data is not touched")
+    p.add_argument("--port", type=int, default=0, help="port to listen on (default: a random free port)")
+    p.add_argument("--no-open", action="store_true", help="do not open a browser; print the one-time link instead")
     add("platforms", cmd_platforms, "list supported platforms")
     p = add("login", cmd_login, "log in to a platform")
     p.add_argument("platform")
@@ -530,6 +509,26 @@ def cmd_tui(args, store=None) -> int:
     return run_tui(demo=args.demo)
 
 
+def cmd_ui(args, store=None) -> int:
+    """Serve the local web UI. Starlette/uvicorn/Jinja2 are imported only here."""
+    if not 0 <= args.port <= 65535:
+        print("error: --port must be between 0 and 65535", file=sys.stderr)
+        return 2
+    if args.demo:
+        from .tui.demo import prepare_demo_home
+
+        home = prepare_demo_home()
+        print(f"Demo mode: fake data lives in {home} (safe to delete afterwards). Your real data is untouched.",
+              file=sys.stderr)
+    try:
+        from .web import run_web
+    except ImportError as e:
+        print(f"error: the web UI needs starlette, uvicorn and jinja2 ({e}); run `uv sync`.", file=sys.stderr)
+        return 2
+    configure_logging(args.verbose)
+    return run_web(demo=args.demo, port=args.port, open_browser=not args.no_open)
+
+
 def main(argv: list[str] | None = None) -> int:
     if argv is None:
         argv = sys.argv[1:]
@@ -541,6 +540,8 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if args.command == "tui":
         return cmd_tui(args)
+    if args.command == "ui":
+        return cmd_ui(args)
     configure_logging(args.verbose)
     store = Store(paths.db_path())
     try:

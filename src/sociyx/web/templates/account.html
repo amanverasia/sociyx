@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ acct.handle or acct.account_id }}{% endblock %}
+{% block banner %}{% if acct.platform == 'fixture' %}<p class="banner" role="note">{{ FIXTURE_BANNER }}</p>{% endif %}{% endblock %}
+{% block content %}
+<h1>{{ acct.handle or acct.account_id }} <small>({{ acct.platform }})</small></h1>
+<div id="session" hx-get="{{ base }}/verify" hx-trigger="load" hx-swap="innerHTML" aria-live="polite">
+  <p class="hint">Checking the saved session...</p>
+</div>
+<h2>Stored on this computer</h2>
+<table>
+  <caption class="sr-only">What is stored per content type</caption>
+  <thead><tr><th scope="col">Type</th><th scope="col">What</th><th scope="col">Stored here</th><th scope="col">Dates</th><th scope="col">Latest scan</th></tr></thead>
+  <tbody>
+  {% for t, what, n, span, scan_label in rows %}
+  <tr><td>{{ t }}</td><td>{{ what }}</td><td>{{ n }}</td><td>{{ span }}</td><td>{{ scan_label }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<p>
+  <a class="button primary" href="{{ base }}/browse">Browse and select</a>
+  <a class="button" href="/help#{{ acct.platform }}">Platform notes</a>
+</p>
+{% endblock %}

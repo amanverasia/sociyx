@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Browse {{ acct.handle or acct.account_id }}{% endblock %}
+{% block banner %}{% if acct.platform == 'fixture' %}<p class="banner" role="note">{{ FIXTURE_BANNER }}</p>{% endif %}{% endblock %}
+{% block content %}
+<h1>Browse and select <small>{{ acct.handle or acct.account_id }} ({{ acct.platform }})</small></h1>
+<p class="hint">Ticking boxes never changes anything on the platform. Your selection is kept while you change filters.
+  <a href="{{ base }}">Back to the account</a></p>
+<div id="browse-body">
+{% include "_browse_body.html" %}
+</div>
+{% endblock %}

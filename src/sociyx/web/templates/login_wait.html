@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Logging in{% endblock %}
+{% block content %}
+<h1>Logging in to {{ platform|capitalize }}</h1>
+<div id="login-status" hx-get="/login/{{ token }}/status" hx-trigger="load, every 2s" hx-swap="innerHTML" aria-live="polite">
+  <p>Starting the login...</p>
+</div>
+{% endblock %}

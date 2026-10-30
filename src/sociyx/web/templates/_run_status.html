@@ -1,0 +1,20 @@
+<div data-running="{{ 'true' if running else 'false' }}">
+  <progress max="{{ total }}" value="{{ done }}" aria-label="Progress">{{ done }}/{{ total }}</progress>
+  <p class="status"><strong>{{ done }}/{{ total }} done</strong>
+    {% for label, n in counts %}<span class="count">{{ label }}: {{ n }}</span>{% endfor %}</p>
+  {% if stopped_msg %}
+  <p class="error" role="alert">{{ stopped_msg }}</p>
+  <p><a class="button" href="/results/{{ plan_id }}">See results so far</a> <a class="button" href="/">Home</a></p>
+  {% elif snap %}
+  <p>{{ snap.state_text }}</p>
+  {% if pause_pending %}<p class="warn">Pause requested: finishing the current item, then stopping.</p>{% endif %}
+  {% if cancel_pending %}<p class="warn">Cancel requested: stopping before the next item.</p>{% endif %}
+  {% if snap.wait_left > 0 %}<p class="hint">Next action in {{ format_duration(snap.wait_left) }} ({{ snap.reason }})</p>{% endif %}
+  {% else %}
+  <p class="hint">This job is running in another process (for example the terminal).</p>
+  {% endif %}
+  {% if snap and snap.log %}
+  <details open><summary>Recent activity</summary>
+  <pre class="result">{{ snap.log[-15:]|join("\n") }}</pre></details>
+  {% endif %}
+</div>

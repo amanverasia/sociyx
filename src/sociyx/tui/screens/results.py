@@ -11,7 +11,7 @@ from textual.screen import Screen
 from textual.widgets import Button, Collapsible, Footer, Static
 
 from ...export import write_private_file
-from ...models import from_iso
+from ...service import RESUMABLE, status_message  # noqa: F401
 from ...planning import execute_command
 from ...report import build_report, render_report
 from ..app import FIXTURE_BANNER
@@ -20,29 +20,6 @@ from .home import HomeScreen
 from .resume import confirm_resume
 
 SECTION_ROWS = 300  # per section; the saved report file has everything
-RESUMABLE = ("paused", "stopped_auth", "stopped_blocked", "running")
-
-
-def status_message(job: dict | None) -> tuple[str, str]:
-    """(plain-words explanation of the job status, CSS class)."""
-    if not job:
-        return "This plan has not been started.", "hint"
-    status, err = job["status"], job.get("error") or ""
-    if status == "completed":
-        return "Job completed: every item reached a final outcome.", "ok"
-    if status == "cancelled":
-        return "Job cancelled. Remaining items were skipped; items already deleted stay deleted.", "hint"
-    if status == "stopped_auth":
-        return ("Your login expired or the platform asked for a challenge. Log in again (Home, open the account, "
-                f"'Log in again'), then resume this job. {err}"), "error"
-    if status == "stopped_blocked":
-        until = from_iso(job.get("rate_limited_until"))
-        when = f" Do not resume before {until.astimezone().strftime('%Y-%m-%d %H:%M %Z')}." if until else ""
-        return ("The platform is restricting this account. Stop for now, resolve it in the official app or site, "
-                f"and wait out the cool-down.{when} {err}"), "error"
-    if "daily cap" in err:
-        return (f"Paused on purpose: the daily limit on deletions was reached. Nothing is wrong. {err}"), "hint"
-    return (f"Job {status}. {err}".strip() + " Nothing is lost; resume when ready."), "hint"
 
 
 class ResultsScreen(Screen):

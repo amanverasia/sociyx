@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Deleting{% endblock %}
+{% block banner %}{% if plan.platform == 'fixture' %}<p class="banner" role="note">{{ FIXTURE_BANNER }}</p>{% endif %}{% endblock %}
+{% block content %}
+<h1>Deleting {{ plan.item_count }} items from {{ acct.handle if acct else plan.account_id }} <small>({{ plan.platform }}, plan {{ plan.plan_id }})</small></h1>
+<p class="hint">Export of exactly these items: <a href="/plan/{{ plan.plan_id }}/export">download</a>. You can leave this page; the job keeps running while sociyx is open. Closing sociyx pauses it after the current item.</p>
+<div id="run-status" hx-get="/run/{{ plan_id }}/status" hx-trigger="load, every 1s" hx-swap="innerHTML" aria-live="polite">
+  <p>Starting...</p>
+</div>
+<div class="row" id="run-controls">
+  <button type="button" hx-post="/run/{{ plan_id }}/pause" hx-target="#run-msg" hx-swap="innerHTML">Pause after the current item</button>
+  <button type="button" class="danger-btn" hx-get="/run/{{ plan_id }}/cancel" hx-target="#run-confirm" hx-swap="innerHTML">Cancel job...</button>
+</div>
+<p id="run-msg" role="status"></p>
+<div id="run-confirm"></div>
+{% endblock %}

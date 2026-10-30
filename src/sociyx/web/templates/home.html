@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Your accounts{% endblock %}
+{% block content %}
+<h1>Your accounts</h1>
+<p class="hint">Pick an account to scan, browse and select. Nothing is deleted until you review a selection and type the confirmation phrase.</p>
+{% if accounts %}
+<table>
+  <caption class="sr-only">Known accounts</caption>
+  <thead><tr><th scope="col">Platform</th><th scope="col">Handle</th><th scope="col">Last verified</th><th scope="col"><span class="sr-only">Open</span></th></tr></thead>
+  <tbody>
+  {% for r in accounts %}
+  <tr><td>{{ r["platform"] }}</td><td>{{ r["handle"] or r["account_id"] }}</td><td>{{ r["last_verified_at"] or "never" }}</td>
+      <td><a class="button" href="/a/{{ r['platform'] }}/{{ b64(r['account_id']) }}">Open</a></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No accounts yet. <a href="/login">Add an account</a> to log in.</p>
+{% endif %}
+<p><a class="button primary" href="/login">Add account</a> <a class="button" href="/import">Import a data export</a></p>
+
+{% if running %}
+<h2>Running now</h2>
+<ul>{% for r in running %}<li>Plan {{ r.plan_id }}: <a href="/run/{{ r.plan_id }}">watch progress</a></li>{% endfor %}</ul>
+{% endif %}
+
+{% if jobs %}
+<h2>Unfinished jobs</h2>
+<p class="hint">Paused, stopped or interrupted deletion jobs. If a job stopped because the login expired, open the account and log in again first.</p>
+<table>
+  <thead><tr><th scope="col">Job</th><th scope="col">Account</th><th scope="col">Status</th><th scope="col">Items</th><th scope="col">Remaining</th><th scope="col">Outcomes so far</th><th scope="col"><span class="sr-only">Action</span></th></tr></thead>
+  <tbody>
+  {% for r in jobs %}
+  <tr><td>{{ r.job["job_id"] }}</td><td>{{ r.handle }} ({{ r.plan.platform }})</td><td>{{ r.job["status"] }}</td>
+      <td>{{ r.plan.item_count }}</td><td>{{ r.remaining }}</td><td>{{ counts_text(r.counts) }}</td>
+      <td><a class="button" href="/resume/{{ r.plan.plan_id }}">Resume...</a></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if plans %}
+<h2>Plans and results</h2>
+<table>
+  <thead><tr><th scope="col">Plan</th><th scope="col">Account</th><th scope="col">Items</th><th scope="col">Created</th><th scope="col">Job</th><th scope="col"><span class="sr-only">Results</span></th></tr></thead>
+  <tbody>
+  {% for p in plans %}
+  <tr><td>{{ p["plan_id"] }}</td><td>{{ p["handle"] or p["account_id"] }} ({{ p["platform"] }})</td><td>{{ p["item_count"] }}</td>
+      <td>{{ p["created_at"] }}</td><td>{{ p["job_status"] or "not started" }}</td>
+      <td><a href="/results/{{ p['plan_id'] }}">Results</a></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}

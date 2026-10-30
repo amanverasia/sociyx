@@ -1,0 +1,8 @@
+<form class="danger" hx-post="/run/{{ plan_id }}/cancel" hx-target="#run-confirm" hx-swap="innerHTML">
+  <input type="hidden" name="confirm" value="yes">
+  <p><strong>Cancel this job?</strong> Remaining items will be marked skipped and the job cannot be resumed. Items already deleted stay deleted.</p>
+  <div class="row">
+    <button type="submit" class="danger-btn">Cancel the job</button>
+    <button type="button" hx-get="/run/{{ plan_id }}/cancel?close=1" hx-target="#run-confirm" hx-swap="innerHTML" autofocus>Keep going</button>
+  </div>
+</form>

@@ -9,36 +9,10 @@ from textual.screen import Screen
 from textual.widgets import Button, DataTable, Footer, Static
 from textual.worker import Worker, WorkerState
 
-from ...models import Account, ActionBlocked, AuthRequired
-from ...redact import scrub
+from ...models import Account
 from ..app import FIXTURE_BANNER
+from ...service import scan_label, type_rows, verify_session  # noqa: F401  (re-exported for tests)
 from ..dialogs import InfoDialog
-
-
-def scan_label(row) -> str:
-    if row is None:
-        return "never scanned"
-    status = {"complete": "complete", "failed": "FAILED"}.get(row["status"], "partial (resumable)")
-    return f"{status}, {row['items_seen']} seen" + (f" ({row['error']})" if row["error"] else "")
-
-
-def type_rows(store, cls, account: Account) -> list[tuple]:
-    """(type, description, stored, date range, scan status) per content type, including unexpected stored types."""
-    counts: dict[str, dict] = {}
-    for r in store.item_counts(account.platform, account.account_id):
-        c = counts.setdefault(r["content_type"], {"present": 0, "oldest": None, "newest": None})
-        if r["state"] == "present":
-            c["present"] += r["n"]
-            c["oldest"] = min(filter(None, [c["oldest"], r["oldest"]]), default=None)
-            c["newest"] = max(filter(None, [c["newest"], r["newest"]]), default=None)
-    scans = {s["content_type"]: s for s in store.latest_scans(account.platform, account.account_id)}
-    types = list(cls.content_types) + [t for t in counts if t not in cls.content_types]
-    out = []
-    for t in types:
-        c = counts.get(t, {"present": 0, "oldest": None, "newest": None})
-        span = f"{c['oldest'][:10]} .. {c['newest'][:10]}" if c["oldest"] and c["newest"] else "-"
-        out.append((t, cls.content_types.get(t, ""), c["present"], span, scan_label(scans.get(t))))
-    return out
 
 
 class AccountScreen(Screen):
@@ -87,16 +61,7 @@ class AccountScreen(Screen):
     def _verify(self) -> tuple[str, str, Account | None]:
         adapter = self.app.new_adapter(self.account.platform)  # type: ignore[attr-defined]
         try:
-            live = adapter.current_account(self.account.account_id)
-            if live.account_id != self.account.account_id:
-                return "mismatch", "the saved session belongs to a different account; refusing to use it", None
-            return "ok", "", live
-        except AuthRequired as e:
-            return "auth", scrub(str(e)), None
-        except ActionBlocked as e:
-            return "blocked", scrub(f"{e}. {e.guidance()}"), None
-        except Exception as e:
-            return "error", scrub(f"{type(e).__name__}: {e}"), None
+            return verify_session(adapter, self.account)
         finally:
             adapter.close()
 

@@ -1,0 +1,13 @@
+{% if kind == 'ok' %}
+<p class="ok" role="status">Session verified with the platform.</p>
+<h2>Scan</h2>
+<p class="hint">Scanning only READS your history into the local database. It never deletes anything.
+{% if scan_delay[1] > 0 %} The scanner waits {{ '%g' % scan_delay[0] }}-{{ '%g' % scan_delay[1] }} s between pages on purpose, to look like normal use and avoid being rate limited. Large accounts take a while.{% endif %}</p>
+{% include "_scan_status.html" %}
+{% else %}
+<p class="error" role="alert">
+{% if kind == 'auth' %}Not logged in ({{ msg }}). Browsing saved items still works.
+{% else %}Could not verify the session: {{ msg }}{% endif %}
+</p>
+{% if kind in ('auth', 'error') %}<p><a class="button" href="/login?platform={{ acct.platform }}&amp;hint={{ hint }}">Log in again</a></p>{% endif %}
+{% endif %}

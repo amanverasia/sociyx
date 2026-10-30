@@ -15,32 +15,8 @@ from ...planning import create_plan_from_items, describe_pacing, execute_command
 from ...redact import scrub
 from ..app import FIXTURE_BANNER
 from ..dialogs import InfoDialog
-from ..model import group_of, one_line
+from ...service import TYPE_WARNINGS, confirmation_phrase, describe_selection, one_line  # noqa: F401
 from .home import HomeScreen
-
-TYPE_WARNINGS = {
-    "dm": "Unsending a direct message removes it for everyone in the conversation, not just for you.",
-    "like": "Removing a like cannot be undone by this tool; you would have to like the post again by hand.",
-    "repost": "Removing a repost cannot be undone by this tool.",
-    "post": "Deleted posts disappear from your profile and cannot be restored by this tool.",
-}
-
-
-def describe_selection(items: list[ContentItem]) -> tuple[str, list[str]]:
-    """(headline fragment like '12 items in 2 conversations', per-type count lines)."""
-    by_type: dict[str, int] = {}
-    convos: set[str] = set()
-    for i in items:
-        by_type[i.content_type] = by_type.get(i.content_type, 0) + 1
-        g = group_of(i)
-        if g:
-            convos.add(g[0])
-    if convos:
-        groups = f"{len(convos)} conversation{'s' if len(convos) != 1 else ''}"
-    else:
-        groups = f"{len(by_type)} content type{'s' if len(by_type) != 1 else ''}"
-    return f"{len(items)} item{'s' if len(items) != 1 else ''} in {groups}", [f"{n} {t}" for t, n in sorted(by_type.items())]
-
 
 class ReviewScreen(Screen):
     BINDINGS = [("escape", "back", "Back")]
@@ -54,7 +30,7 @@ class ReviewScreen(Screen):
 
     @property
     def phrase(self) -> str:
-        return f"delete {len(self.items)}"
+        return confirmation_phrase(len(self.items))
 
     def compose(self) -> ComposeResult:
         cls = self.app.adapter_cls(self.account.platform)  # type: ignore[attr-defined]

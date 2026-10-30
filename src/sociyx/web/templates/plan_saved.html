@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Plan saved{% endblock %}
+{% block content %}
+<h1>Plan {{ plan.plan_id }} saved</h1>
+<p class="ok" role="status">{{ plan.item_count }} items were frozen into a plan. <strong>Nothing was deleted.</strong></p>
+<p><a href="/plan/{{ plan.plan_id }}/export">Download the export of exactly these items</a>.</p>
+<p>To delete later, start it from the terminal (<code>sociyx plan show {{ plan.plan_id }} --all</code> shows the confirmation token that <code>plan execute</code> needs), or select the items again here. Data folder: {{ export_dir }}</p>
+<p><a class="button" href="/">Home</a> <a class="button" href="/results/{{ plan.plan_id }}">Plan page</a></p>
+{% endblock %}

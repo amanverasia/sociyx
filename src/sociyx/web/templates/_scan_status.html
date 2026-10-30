@@ -1,0 +1,29 @@
+<div id="scan-area" {% if scan and scan.running %}hx-get="{{ base }}/scan/status" hx-trigger="every 1s" hx-swap="outerHTML"{% endif %}>
+{% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+{% if scan and scan.running %}
+  <p role="status">{{ scan.progress }}</p>
+  <form hx-post="{{ base }}/scan/stop" hx-target="#scan-area" hx-swap="outerHTML">
+    <button type="submit">Stop (finishes the current page)</button>
+  </form>
+{% else %}
+  {% if scan %}
+    {% if scan.error %}<p class="error" role="alert">{{ scan.error }}</p>{% endif %}
+    {% if scan.lines %}<pre class="result">{{ scan.lines|join("\n") }}{% if scan.stopped %}
+
+Stopped. Progress is saved; scan again to continue where it left off.{% endif %}</pre>{% endif %}
+  {% endif %}
+  <form hx-post="{{ base }}/scan/start" hx-target="#scan-area" hx-swap="outerHTML">
+    <label>Content type
+      <select name="type">
+        <option value="">All content types</option>
+        {% for t, d in scan_options %}<option value="{{ t }}">{{ t }}: {{ d }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Pages to scan this time (empty = scan everything)
+      <input type="text" name="pages" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+    </label>
+    <label class="check"><input type="checkbox" name="fresh" value="1"> Start over instead of resuming an unfinished scan</label>
+    <button type="submit" class="primary">Start scan</button>
+  </form>
+{% endif %}
+</div>
